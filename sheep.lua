@@ -29,8 +29,70 @@ for _,color in ipairs({"white", "black"}) do
             {50, "wool:" .. color},
         },
 
+        food_nodes = {
+            "group:grass",
+            "group:flora",
+        },
+
+        habitat_nodes = {
+            "group:flora",
+            "group:grass",
+            "group:dirt",
+            "group:soil",
+            "group:sand",
+        },
+
         on_init = function(self, data)
             self.hp_max = 4
+            data.jump = 5
         end,
+
+        start = "wander",
+
+        script = {
+            wander = {
+                actions = {
+                    "find_food",
+                    "find_habitat",
+                },
+                events = {
+                    found = "goto",
+                    hit = "flee",
+                    timeout = "wander",
+                },
+            },
+
+            standing = {
+                actions = {
+                    "check_food",
+                },
+                events = {
+                    timeout = "wander",
+                    at_food = "eat",
+                },
+            },
+
+            eat = {
+                events = {
+                    done = "standing",
+                    gone = "wander",
+                },
+            },
+
+            goto = {
+                events = {
+                    hit = "flee",
+                    arrived = "standing",
+                    timeout = "wander",
+                },
+            },
+
+            flee = {
+                events = {
+                    hit = "flee",
+                    timeout = "wander",
+                }
+            },
+        },
     })
 end

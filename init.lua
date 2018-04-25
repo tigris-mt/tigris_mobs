@@ -7,6 +7,8 @@ function m.spawn(name, pos)
 end
 
 function m.register(name, def)
+    def.name = name
+
     minetest.register_node(name, {
         description = def.description,
 
@@ -46,6 +48,8 @@ function m.register(name, def)
 
             self.object:set_properties(self)
             self.object:set_hp(self.hp_max)
+
+            self._data.state = def.start
         end,
 
         on_death = function(self)
@@ -73,7 +77,9 @@ function m.register(name, def)
                 self._data.p = nil
                 self.object:set_hp(self._data.hp or 0)
             end
+
             self.object:set_properties(self)
+            self.object:set_acceleration(vector.new(0, -8.5, 0))
         end,
 
         get_staticdata = function(self)
@@ -83,10 +89,27 @@ function m.register(name, def)
         end,
 
         on_step = function(self, dtime)
-            self._data.created = self._data.created or 0
+            if not self._data.created then
+                minetest.log("warning", "Removed invalid " .. def.name .. " at " .. minetest.pos_to_string(self.object:getpos()))
+                self.object:remove()
+                return
+            end
+
+            self.last_pos = self.last_pos or self.object:getpos()
+            self.falling = self.falling or 0
 
             if def.on_step then
                 def.on_step(self, dtime)
+            end
+
+            local ydiff = math.abs((self.last_pos.y - self.object:getpos().y) / dtime)
+            local node = minetest.get_node(vector.subtract(self.object:getpos(), vector.new(0, 1, 0)))
+            local rn = minetest.registered_nodes[node.name]
+            if self.falling > 0.5 and rn and rn.walkable then
+                self.object:set_hp(self.object:get_hp() - math.floor((ydiff * self.falling) / 5))
+                self.falling = 0
+            else
+                self.falling = self.falling + dtime
             end
 
             if self._data.timeout and os.time() - self._data.created > self._data.timeout then
@@ -101,9 +124,15 @@ function m.register(name, def)
 
             self.infotext = ("%d/%d ♥"):format(self.object:get_hp(), self.hp_max)
             self.object:set_properties(self)
+
+            tigris.mobs.state(self, dtime, def)
+
+            self.last_pos = self.object:getpos()
         end,
     })
 end
 
+tigris.include("state.lua")
 tigris.include("items.lua")
+
 tigris.include("sheep.lua")
