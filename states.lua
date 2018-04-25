@@ -11,8 +11,9 @@ function m.reset_timeout(self, context)
     context.data.time = 0
 end
 
-function m.go(self, context, target, invert)
+function m.go(self, context, target, speed, invert)
     local pos = self.object:getpos()
+    local cvel = self.object:getvelocity()
 
     if not invert and vector.distance(pos, target) < 1 then
         self.object:setvelocity(vector.new(0, 0, 0))
@@ -21,23 +22,37 @@ function m.go(self, context, target, invert)
         }}
     end
 
-    self.object:setyaw(math.atan2((target.z - pos.z) * (invert and -1 or 1), (target.x - pos.x) * (invert and -1 or 1)) + 1.57)
+    local yaw = math.atan2((target.z - pos.z) * (invert and -1 or 1), (target.x - pos.x) * (invert and -1 or 1))
+    self.object:setyaw(yaw + 1.57)
+
+    local v = {
+        x = math.cos(yaw),
+        z = math.sin(yaw),
+    }
+
     local vel = vector.new(
-        math.sign(target.x - pos.x) * (invert and -1 or 1),
-        self.object:getvelocity().y,
-        math.sign(target.z - pos.z) * (invert and -1 or 1)
+        v.x * speed,
+        cvel.y,
+        v.z * speed
     )
 
+    local function solid(pos)
+        return minetest.registered_nodes[minetest.get_node(pos).name].walkable
+    end
+
     if self._data.jump then
-        context.data.goto_last_pos = context.data.goto_last_pos or pos
-        if vector.distance(context.data.goto_last_pos, pos) < 0.5 * context.dtime and (
-                minetest.registered_nodes[minetest.get_node(
-                    vector.add(pos, vector.new(0, -1, 0))
-                ).name].walkable
-            ) then
+        self._data.glp = self._data.glp or pos
+        local dojump = solid(vector.add(pos, vector.new(vel.x, 0, vel.z))) and solid(vector.add(pos, vector.new(0, -1, 0)))
+        if dojump or vector.distance(pos, self._data.glp) < speed * context.dtime * 0.1 then
+            local fok = not solid(vector.add(pos, vector.new(vel.x, 1, vel.z))) and not solid(vector.add(pos, vector.new(vel.x, 2, vel.z)))
+            local aok = not solid(vector.add(pos, vector.new(0, 1, 0))) and not solid(vector.add(pos, vector.new(0, 2, 0)))
+            if fok and aok then
                 vel.y = self._data.jump
+            else
+                return {name = "stuck"}
+            end
         end
-        context.data.goto_last_pos = pos
+        self._data.glp = pos
     end
 
     self.object:setvelocity(vel)
@@ -50,17 +65,18 @@ m.register_state("wander", {
 m.register_state("goto", {
     func = function(self, context)
         local target = (type(context.data.target) == "table") and context.data.target or context.data.target:getpos()
-        return m.go(self, context, target) or m.state_timeout(self, context, 15)
+        return m.go(self, context, target, self._data.speed) or m.state_timeout(self, context, 15)
     end,
 })
 
 m.register_state("standing", {
-    func = function(self, context) return m.state_timeout(self, context, 15) end,
+    func = function(self, context) return m.state_timeout(self, context, 5) end,
 })
 
 m.register_state("eat", {
     func = function(self, context)
         if minetest.find_node_near(context.data.target, 0, context.def.food_nodes, true) then
+            self.eaten = true
             self.object:set_hp(self.hp_max)
             minetest.remove_node(context.data.target)
             return {name = "done"}
@@ -82,7 +98,7 @@ m.register_state("flee", {
         else
             target = context.data.punch_pos
         end
-        return m.go(self, context, target, true) or m.state_timeout(self, context, 15)
+        return m.go(self, context, target, self._data.fast_speed, true) or m.state_timeout(self, context, 15)
     end,
 })
 
@@ -93,13 +109,16 @@ local function find_node(self, context, nodes, above)
     local nodes = minetest.find_nodes_in_area_under_air(min, max, nodes)
     if #nodes > 0 then
         return {name = "found", data = {
-            target = nodes[math.random(1, #nodes)],
+            target = vector.add(nodes[math.random(1, #nodes)], vector.new(0, above and 0 or 1, 0)),
         }}
     end
 end
 
 m.register_action("find_food", {
     func = function(self, context)
+        if self.object:get_hp() >= self.hp_max and self.eaten then
+            return
+        end
         return find_node(self, context, context.def.food_nodes, true)
     end,
 })

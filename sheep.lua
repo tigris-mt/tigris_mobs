@@ -1,7 +1,7 @@
 for _,color in ipairs({"white", "black"}) do
     tigris.mobs.register("tigris_mobs:sheep_" .. color, {
         description = "Sheep",
-        collision = {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5},
+        collision = {-0.4, -0.4, -0.4, 0.4, 0.4, 0.4},
         box = {
             {-0.25, 0, -0.5, 0.25, 0.6, 0.5},
             {-0.25, -0.5, -0.5, -0.1, 0, -0.35},
@@ -85,6 +85,7 @@ for _,color in ipairs({"white", "black"}) do
                     hit = "flee",
                     arrived = "standing",
                     timeout = "wander",
+                    stuck = "wander",
                 },
             },
 
@@ -93,6 +94,7 @@ for _,color in ipairs({"white", "black"}) do
                     hit = "flee",
                     timeout = "wander",
                     escaped = "wander",
+                    stuck = "flee",
                 }
             },
         },

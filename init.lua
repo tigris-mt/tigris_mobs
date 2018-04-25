@@ -40,6 +40,9 @@ function m.register(name, def)
             self._data = {
                 created = os.time(),
                 timeout = 300,
+                jump = 5,
+                speed = 1,
+                fast_speed = 2,
             }
 
             if def.on_init then
