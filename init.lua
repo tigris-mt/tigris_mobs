@@ -67,6 +67,8 @@ function m.register(name, def)
         end,
 
         on_activate = function(self, data)
+            self.def = def
+
             self._data = minetest.deserialize(data)
             if type(self._data) ~= "table" then
                 self:_on_init()
@@ -128,6 +130,11 @@ function m.register(name, def)
             tigris.mobs.state(self, dtime, def)
 
             self.last_pos = self.object:getpos()
+        end,
+
+        on_punch = function(self, puncher)
+            self.puncher = puncher
+            m.fire_event(self, {name = "hit"})
         end,
     })
 end

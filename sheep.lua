@@ -69,6 +69,7 @@ for _,color in ipairs({"white", "black"}) do
                 events = {
                     timeout = "wander",
                     at_food = "eat",
+                    hit = "flee",
                 },
             },
 
@@ -91,6 +92,7 @@ for _,color in ipairs({"white", "black"}) do
                 events = {
                     hit = "flee",
                     timeout = "wander",
+                    escaped = "wander",
                 }
             },
         },

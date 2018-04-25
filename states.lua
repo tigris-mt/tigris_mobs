@@ -7,44 +7,50 @@ function m.state_timeout(self, context, seconds)
     end
 end
 
+function m.reset_timeout(self, context)
+    context.data.time = 0
+end
+
+function m.go(self, context, target, invert)
+    local pos = self.object:getpos()
+
+    if not invert and vector.distance(pos, target) < 1 then
+        self.object:setvelocity(vector.new(0, 0, 0))
+        return {name = "arrived", data = {
+            target = target,
+        }}
+    end
+
+    self.object:setyaw(math.atan2((target.z - pos.z) * (invert and -1 or 1), (target.x - pos.x) * (invert and -1 or 1)) + 1.57)
+    local vel = vector.new(
+        math.sign(target.x - pos.x) * (invert and -1 or 1),
+        self.object:getvelocity().y,
+        math.sign(target.z - pos.z) * (invert and -1 or 1)
+    )
+
+    if self._data.jump then
+        context.data.goto_last_pos = context.data.goto_last_pos or pos
+        if vector.distance(context.data.goto_last_pos, pos) < 0.5 * context.dtime and (
+                minetest.registered_nodes[minetest.get_node(
+                    vector.add(pos, vector.new(0, -1, 0))
+                ).name].walkable
+            ) then
+                vel.y = self._data.jump
+        end
+        context.data.goto_last_pos = pos
+    end
+
+    self.object:setvelocity(vel)
+end
+
 m.register_state("wander", {
     func = function(self, context) return m.state_timeout(self, context, 15) end,
 })
 
 m.register_state("goto", {
     func = function(self, context)
-        local pos = self.object:getpos()
         local target = (type(context.data.target) == "table") and context.data.target or context.data.target:getpos()
-
-        if vector.distance(pos, target) < 1 then
-            self.object:setvelocity(vector.new(0, 0, 0))
-            return {name = "arrived", data = {
-                target = target,
-            }}
-        end
-
-        self.object:setyaw(math.atan2(target.z - pos.z, target.x - pos.x) + 1.57)
-        local vel = vector.new(
-            math.sign(target.x - pos.x),
-            self.object:getvelocity().y,
-            math.sign(target.z - pos.z)
-        )
-
-        if self._data.jump then
-            context.data.goto_last_pos = context.data.goto_last_pos or pos
-            if vector.distance(context.data.goto_last_pos, pos) < 0.5 * context.dtime and (
-                    minetest.registered_nodes[minetest.get_node(
-                        vector.add(pos, vector.new(0, -1, 0))
-                    ).name].walkable
-                ) then
-                    vel.y = self._data.jump
-            end
-            context.data.goto_last_pos = pos
-        end
-
-        self.object:setvelocity(vel)
-
-        return m.state_timeout(self, context, 15)
+        return m.go(self, context, target) or m.state_timeout(self, context, 15)
     end,
 })
 
@@ -61,6 +67,22 @@ m.register_state("eat", {
         else
             return {name = "gone"}
         end
+    end,
+})
+
+m.register_state("flee", {
+    func = function(self, context)
+        local target
+        context.data.punch_pos = context.data.punch_pos or self.object:getpos()
+        if self.puncher then
+            target = self.puncher:getpos()
+            if vector.distance(self.object:getpos(), target) < 12 then
+                m.reset_timeout(self, context)
+            end
+        else
+            target = context.data.punch_pos
+        end
+        return m.go(self, context, target, true) or m.state_timeout(self, context, 15)
     end,
 })
 

@@ -11,15 +11,28 @@ function m.register_state(n, d)
     m.states[n] = d
 end
 
+function m.reset_state(self, s, data)
+    self._data.state_data = data or {}
+    self.sdata = self._data.state_data
+    self._data.state = s
+end
+
+function m.fire_event(self, event)
+    if not self._data.state then
+        return
+    end
+    local context = {
+        script = self.def.script[self._data.state],
+    }
+    if not context.script then
+        return
+    end
+    m.reset_state(self, context.script.events[event.name], event.data)
+end
+
 function m.state(self, dtime, def)
     self._data.state_data = self._data.state_data or {}
     self.sdata = self._data.state_data
-
-    local function reset_state(s, data)
-        self._data.state_data = data or {}
-        self.sdata = self._data.state_data
-        self._data.state = s
-    end
 
     local state = self._data.state
     local context = {
@@ -45,7 +58,7 @@ function m.state(self, dtime, def)
         end
         if event then
             if context.script.events[event.name] then
-                reset_state(context.script.events[event.name], event.data)
+                m.fire_event(self, event)
             else
                 minetest.log("warning", def.name .. " with invalid event: " .. tostring(event.name))
             end
