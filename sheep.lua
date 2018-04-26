@@ -97,4 +97,16 @@ for _,color in ipairs({"white", "black"}) do
             },
         },
     })
+
+    tigris.mobs.register_spawn("tigris_mobs:sheep_" .. color, {
+        ymax = tigris.world_limits.max.y,
+        ymin = -24,
+
+        light_min = 0,
+        light_max = minetest.LIGHT_MAX,
+
+        chance = 5000,
+
+        nodes = tigris.mobs.nodes.dirt,
+    })
 end

@@ -40,6 +40,8 @@ function m.register(name, def)
         visual_size = {x = 1, y = 1},
         textures = {name},
 
+        mob_def = def,
+
         _on_init = function(self)
             self._data = {
                 created = os.time(),
@@ -173,6 +175,7 @@ end
 
 tigris.include("state.lua")
 tigris.include("items.lua")
+tigris.include("spawning.lua")
 
 tigris.mobs.nodes = {
     dirt = {

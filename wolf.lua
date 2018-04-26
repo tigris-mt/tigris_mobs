@@ -114,3 +114,14 @@ tigris.mobs.register("tigris_mobs:wolf", {
     },
 })
 
+tigris.mobs.register_spawn("tigris_mobs:wolf", {
+    ymax = tigris.world_limits.max.y,
+    ymin = -24,
+
+    light_min = 0,
+    light_max = minetest.LIGHT_MAX,
+
+    chance = 20000,
+
+    nodes = tigris.mobs.nodes.dirt,
+})
