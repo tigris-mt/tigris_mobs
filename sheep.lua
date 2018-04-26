@@ -46,6 +46,15 @@ for _,color in ipairs({"white", "black"}) do
         start = "wander",
 
         script = {
+            global = {
+                events = {
+                    hit = "flee",
+                    timeout = "wander",
+                    stuck = "wander",
+                    node_damage = "flee",
+                },
+            },
+
             wander = {
                 actions = {
                     "enemy_reset",
@@ -56,8 +65,6 @@ for _,color in ipairs({"white", "black"}) do
                 },
                 events = {
                     found = "goto",
-                    hit = "flee",
-                    timeout = "wander",
                 },
             },
 
@@ -66,9 +73,7 @@ for _,color in ipairs({"white", "black"}) do
                     "check_food",
                 },
                 events = {
-                    timeout = "wander",
                     at_food = "eat",
-                    hit = "flee",
                 },
             },
 
@@ -81,19 +86,13 @@ for _,color in ipairs({"white", "black"}) do
 
             goto = {
                 events = {
-                    hit = "flee",
                     arrived = "standing",
-                    timeout = "wander",
-                    stuck = "wander",
                 },
             },
 
             flee = {
                 events = {
-                    hit = "flee",
-                    timeout = "wander",
                     escaped = "wander",
-                    stuck = "wander",
                 }
             },
         },

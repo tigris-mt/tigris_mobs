@@ -43,6 +43,16 @@ tigris.mobs.register("tigris_mobs:wolf", {
     start = "wander",
 
     script = {
+        global = {
+            events = {
+                low_hp = "flee",
+                hit = "goto",
+                timeout = "wander",
+                stuck = "wander",
+                node_damage = "flee",
+            },
+        },
+
         wander = {
             actions = {
                 "enemy_reset",
@@ -55,8 +65,6 @@ tigris.mobs.register("tigris_mobs:wolf", {
             },
             events = {
                 found = "goto",
-                hit = "goto",
-                timeout = "wander",
             },
         },
 
@@ -67,13 +75,9 @@ tigris.mobs.register("tigris_mobs:wolf", {
                 "check_target",
             },
             events = {
-                hit = "goto",
                 arrived = "standing",
                 arrived_entity = "fight",
-                stuck = "wander",
                 gone = "wander",
-                timeout = "standing",
-                low_hp = "flee",
             },
         },
 
@@ -83,10 +87,7 @@ tigris.mobs.register("tigris_mobs:wolf", {
                 "regenerate",
                 "fight_tick",
             },
-            events = {
-                hit = "goto",
-                timeout = "wander",
-            },
+            events = {},
         },
 
         fight = {
@@ -97,7 +98,6 @@ tigris.mobs.register("tigris_mobs:wolf", {
             events = {
                 wait = "goto",
                 done = "goto",
-                hit = "goto",
             },
         },
 
@@ -108,9 +108,7 @@ tigris.mobs.register("tigris_mobs:wolf", {
             },
             events = {
                 hit = "flee",
-                timeout = "wander",
                 escaped = "wander",
-                stuck = "wander",
             }
         },
     },

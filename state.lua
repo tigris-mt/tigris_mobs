@@ -17,16 +17,28 @@ function m.reset_state(self, s, data)
     self._data.state = s
 end
 
+local function apply_global(def, context)
+    if def.script.global then
+        if def.script.global.events then
+            for k,v in pairs(def.script.global.events) do
+                context.script.events[k] = context.script.events[k] or v
+            end
+        end
+    end
+end
+
 function m.fire_event(self, event)
     if not self._data.state then
         return
     end
     local context = {
-        script = self.def.script[self._data.state],
+        script = table.copy(self.def.script[self._data.state]),
     }
     if not context.script then
         return
     end
+    apply_global(self.def, context)
+    assert(context.script.events[event.name], "Invalid event: " .. tostring(event.name))
     m.reset_state(self, context.script.events[event.name], event.data)
 end
 
@@ -38,9 +50,11 @@ function m.state(self, dtime, def)
     local context = {
         dtime = dtime,
         def = def,
-        script = def.script[state],
+        script = table.copy(def.script[state]),
         data = self.sdata,
     }
+
+    apply_global(def, context)
 
     if m.states[state] and context.script then
         local event = m.states[state].func(self, context)

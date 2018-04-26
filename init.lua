@@ -17,6 +17,8 @@ function m.register(name, def)
         node_box = {type = "fixed", fixed = def.box},
         tiles = def.textures,
 
+        node_placement_prediction = "",
+
         groups = {not_in_creative_inventory = 1, tigris_mob = 1},
 
         on_place = function(itemstack, placer, pointed_thing)
@@ -45,6 +47,8 @@ function m.register(name, def)
                 jump = 5,
                 speed = 1,
                 fast_speed = 2,
+                drown = 1,
+                node_damage = true,
             }
 
             if def.on_init then
@@ -86,7 +90,6 @@ function m.register(name, def)
             end
 
             self.object:set_properties(self)
-            self.object:set_acceleration(vector.new(0, -8.5, 0))
         end,
 
         get_staticdata = function(self)
@@ -103,20 +106,48 @@ function m.register(name, def)
             end
 
             self.last_pos = self.last_pos or self.object:getpos()
+            self.last_ground = self.last_ground or self.object:getpos()
             self.falling = self.falling or 0
 
             if def.on_step then
                 def.on_step(self, dtime)
             end
 
-            local ydiff = math.abs((self.last_pos.y - self.object:getpos().y) / dtime)
             local node = minetest.get_node(vector.subtract(self.object:getpos(), vector.new(0, 1, 0)))
             local rn = minetest.registered_nodes[node.name]
-            if self.falling > 0.5 and rn and rn.walkable then
-                self.object:set_hp(self.object:get_hp() - math.floor((ydiff * self.falling) / 5))
-                self.falling = 0
+            if rn and rn.walkable then
+                self.object:set_hp(self.object:get_hp() - math.max(0, math.floor(math.abs(self.object:getpos().y - self.last_ground.y) / 2 - 2)))
+                self.last_ground = self.object:getpos()
+            end
+
+            local rn = minetest.registered_nodes[minetest.get_node(self.object:getpos()).name]
+
+            local g = 1
+            local d = 0
+
+            local liquid = (rn.groups.liquid and rn.groups.liquid > 0)
+
+            if self._data.node_damage and (rn.damage_per_second > 0) then
+                d = rn.damage_per_second * dtime
+                m.fire_event(self, {name = "node_damage"})
+            elseif self._data.drown and liquid then
+                d = 1 * dtime
+                m.fire_event(self, {name = "node_damage"})
             else
-                self.falling = self.falling + dtime
+                self.node_damage_inc = 0
+            end
+
+            if liquid then
+                g = 0
+                self.object:setvelocity(vector.add(self.object:getvelocity(), vector.new(0, self.object:getvelocity().y < 0.5 and 0.5 or 0, 0)))
+            end
+
+            self.object:set_acceleration(vector.new(0, -8.5 * g, 0))
+
+            self.node_damage_inc = (self.node_damage_inc or 0) + d
+            if self.node_damage_inc > 1 then
+                self.object:set_hp(self.object:get_hp() - self.node_damage_inc)
+                self.node_damage_inc = 0
             end
 
             if self.object:get_hp() <= 0 then

@@ -36,14 +36,15 @@ function m.go(self, context, target, speed, invert)
         v.z * speed
     )
 
-    local function solid(pos)
-        return minetest.registered_nodes[minetest.get_node(pos).name].walkable
+    local function solid(pos, liquid)
+        local n = minetest.registered_nodes[minetest.get_node(pos).name]
+        return n.walkable or (liquid and n.groups.liquid and n.groups.liquid > 0)
     end
 
     if self._data.jump then
         self._data.glp = self._data.glp or pos
         if vector.distance(self._data.glp, pos) > 0.1 * context.dtime then
-            local dojump = solid(vector.add(pos, vector.new(vel.x, 0, vel.z))) and solid(vector.add(pos, vector.new(0, -1, 0)))
+            local dojump = solid(vector.add(pos, vector.new(vel.x, 0, vel.z))) and solid(vector.add(pos, vector.new(0, -1, 0)), true)
             if dojump or vector.distance(pos, self._data.glp) < speed * context.dtime * 0.1 then
                 local fok = not solid(vector.add(pos, vector.new(vel.x, 1, vel.z))) and not solid(vector.add(pos, vector.new(vel.x, 2, vel.z)))
                 local aok = not solid(vector.add(pos, vector.new(0, 1, 0))) and not solid(vector.add(pos, vector.new(0, 2, 0)))
