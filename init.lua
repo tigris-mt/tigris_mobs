@@ -171,7 +171,7 @@ function m.register(name, def)
                 return
             end
 
-            self.infotext = ("%s %d/%d ♥"):format(def.name, self.object:get_hp(), self.hp_max)
+            self.infotext = ("%s %d/%d ♥"):format(def.description, self.object:get_hp(), self.hp_max)
             self.object:set_properties(self)
 
             tigris.mobs.state(self, dtime, def)
