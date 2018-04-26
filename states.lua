@@ -234,8 +234,33 @@ m.register_action("fight", {
             for k,v in pairs(self._data.damage) do
                 d[k] = v * self.fight_timer
             end
-            tigris.damage.apply(self.enemy, d)
+            tigris.damage.apply(self.enemy, d, self.object)
             self.fight_timer = 0
+            return {name = "done"}
+        else
+            return {name = "wait"}
+        end
+    end,
+})
+
+m.register_action("throw", {
+    func = function(self, context)
+        if self.fight_timer > 1 and self.enemy and self.enemy:getpos() then
+            local from = vector.add(self.object:getpos(), vector.new(0, self.object:get_properties().collisionbox[5] * 0.75, 0))
+            local to = self.enemy:getpos()
+            to.y = to.y + self.enemy:get_properties().collisionbox[5] * 0.75
+            local dir = vector.normalize{x = to.x - from.x, y = to.y - from.y, z = to.z - from.z}
+
+            tigris.create_projectile(self._data.projectile, {
+                pos = from,
+                velocity = vector.multiply(dir, 10),
+                gravity = 0,
+                owner = self.uid,
+                owner_object = self.object,
+            })
+
+            self.fight_timer = 0
+
             return {name = "done"}
         else
             return {name = "wait"}

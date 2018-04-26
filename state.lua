@@ -18,7 +18,7 @@ function m.reset_state(self, s, data)
 end
 
 local function apply_global(def, context)
-    if def.script.global then
+    if def.script.global and context.script then
         if def.script.global.events then
             for k,v in pairs(def.script.global.events) do
                 context.script.events[k] = context.script.events[k] or v
@@ -32,7 +32,7 @@ function m.fire_event(self, event)
         return
     end
     local context = {
-        script = table.copy(self.def.script[self._data.state]),
+        script = self.def.script[self._data.state] and table.copy(self.def.script[self._data.state]) or nil,
     }
     if not context.script then
         return
@@ -50,7 +50,7 @@ function m.state(self, dtime, def)
     local context = {
         dtime = dtime,
         def = def,
-        script = table.copy(def.script[state]),
+        script = def.script[state] and table.copy(def.script[state]) or nil,
         data = self.sdata,
     }
 

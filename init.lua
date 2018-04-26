@@ -6,6 +6,8 @@ function m.spawn(name, pos)
     return obj
 end
 
+local uids = 0
+
 function m.register(name, def)
     def.name = name
 
@@ -92,6 +94,9 @@ function m.register(name, def)
             end
 
             self.object:set_properties(self)
+
+            uids = uids + 1
+            self.uid = uids
         end,
 
         get_staticdata = function(self)
@@ -188,5 +193,9 @@ tigris.mobs.nodes = {
     },
 }
 
+-- Passive.
 tigris.include("sheep.lua")
+
+-- Aggressive.
+tigris.include("obsidian_spitter.lua")
 tigris.include("wolf.lua")
