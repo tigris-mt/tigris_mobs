@@ -20,6 +20,7 @@ for _,color in ipairs({"white", "black"}) do
             "wool_" .. color .. ".png^tigris_mobs_sheep_face.png",
         },
 
+        group = "peaceful",
         level = 1,
 
         drops = {

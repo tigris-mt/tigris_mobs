@@ -106,6 +106,9 @@ m.register_state("flee", {
         context.data.punch_pos = context.data.punch_pos or self.object:getpos()
         if self.enemy then
             target = self.enemy:getpos()
+            if not target then
+                return {name = "escaped"}
+            end
             local dist = vector.distance(self.object:getpos(), target)
             if dist < 12 then
                 m.reset_timeout(self, context)
@@ -119,13 +122,25 @@ m.register_state("flee", {
     end,
 })
 
+m.register_state("teleport", {
+    func = function(self, context)
+        local target = context.data.target and context.data.target or (self.enemy and self.enemy:getpos() and vector.add(self.enemy:getpos(),
+            self.enemy:get_properties().collisionbox[5] * 0.75))
+        self.teleport_timer = (self.teleport_timer or 0) + context.dtime
+        if self.teleport_timer > 5 then
+            if target then
+                self.object:setpos(target)
+            end
+            self.teleport_timer = 0
+            return {name = "arrived"}
+        end
+    end,
+})
+
 m.register_action("find_target", {
     func = function(self, context)
         for _,obj in ipairs(minetest.get_objects_inside_radius(self.object:getpos(), 16)) do
-            if obj:is_player() then
-                self.enemy = obj
-                return {name = "found"}
-            elseif obj:get_luaentity().tigris_mob and obj:get_luaentity().def.level < context.def.level then
+            if m.valid_enemy(self, obj, true) then
                 self.enemy = obj
                 return {name = "found"}
             end
@@ -198,8 +213,12 @@ m.register_action("check_hp", {
 
 m.register_action("check_target", {
     func = function(self, context)
-        if self.enemy and (not self.enemy:getpos() or vector.distance(self.object:getpos(), self.enemy:getpos()) > 32) then
-            self.enemy = nil
+        if self.enemy and self.enemy:getpos() then
+            if vector.distance(self.object:getpos(), self.enemy:getpos()) > 32 then
+                self.enemy = nil
+                return {name = "gone"}
+            end
+        else
             return {name = "gone"}
         end
     end,

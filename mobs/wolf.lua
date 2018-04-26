@@ -20,6 +20,7 @@ tigris.mobs.register("tigris_mobs:wolf", {
         "wool_dark_grey.png^tigris_mobs_wolf_face.png",
     },
 
+    group = "hunters",
     level = 2,
 
     drops = {

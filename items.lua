@@ -12,8 +12,8 @@ minetest.register_craftitem(":mobs:meat", {
 
 minetest.register_craft({
     type = "cooking",
-    output = ":mobs:meat",
-    recipe = ":mobs:meat_raw",
+    output = "mobs:meat",
+    recipe = "mobs:meat_raw",
     cooktime = 5,
 })
 
@@ -31,4 +31,10 @@ minetest.register_craftitem("tigris_mobs:eye", {
 minetest.register_craftitem("tigris_mobs:fang", {
     description = "Fang",
     inventory_image = "tigris_mobs_fang.png",
+})
+
+minetest.register_craftitem("tigris_mobs:cursed_brain", {
+    description = "Cursed Brain",
+    inventory_image = "tigris_mobs_cursed_brain.png",
+    on_use = minetest.item_eat(1), -- !
 })

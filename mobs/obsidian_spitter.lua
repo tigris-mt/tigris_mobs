@@ -8,10 +8,10 @@ tigris.mobs.register("tigris_mobs:obsidian_spitter", {
         "default_obsidian.png^tigris_mobs_eye.png",
     },
 
+    group = "ur-demons",
     level = 3,
 
     drops = {
-        {50, "mobs:meat_raw"},
         {50, "default:obsidian"},
         {50, "default:obsidian_shard 3"},
         {50, "default:obsidian_shard 3"},
@@ -19,6 +19,8 @@ tigris.mobs.register("tigris_mobs:obsidian_spitter", {
         {25, "tigris_mobs:eye"},
         {15, "tigris_mobs:eye"},
     },
+
+    armor = {fleshy = 75},
 
     on_init = function(self, data)
         self.hp_max = 12

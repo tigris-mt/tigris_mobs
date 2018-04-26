@@ -93,6 +93,14 @@ function m.register(name, def)
                 self.object:set_hp(self._data.hp or 0)
             end
 
+            if def.on_activate then
+                def.on_activate(self)
+            end
+
+            if def.armor then
+                self.object:set_armor_groups(def.armor)
+            end
+
             self.object:set_properties(self)
 
             uids = uids + 1
@@ -114,7 +122,6 @@ function m.register(name, def)
 
             self.last_pos = self.last_pos or self.object:getpos()
             self.last_ground = self.last_ground or self.object:getpos()
-            self.falling = self.falling or 0
 
             if def.on_step then
                 def.on_step(self, dtime)
@@ -123,7 +130,8 @@ function m.register(name, def)
             local node = minetest.get_node(vector.subtract(self.object:getpos(), vector.new(0, 1, 0)))
             local rn = minetest.registered_nodes[node.name]
             if rn and rn.walkable then
-                self.object:set_hp(self.object:get_hp() - math.max(0, math.floor(math.abs(self.object:getpos().y - self.last_ground.y) / 2 - 2)))
+                self.object:set_hp(self.object:get_hp() - math.max(0, math.floor(
+                    math.abs(self.object:getpos().y - self.last_ground.y) / 2 - 2) * (self._data.fall or 1)))
                 self.last_ground = self.object:getpos()
             end
 
@@ -163,7 +171,7 @@ function m.register(name, def)
                 return
             end
 
-            self.infotext = ("%d/%d ♥ %s"):format(self.object:get_hp(), self.hp_max, self._data.state)
+            self.infotext = ("%s %d/%d ♥"):format(def.name, self.object:get_hp(), self.hp_max)
             self.object:set_properties(self)
 
             tigris.mobs.state(self, dtime, def)
@@ -172,10 +180,25 @@ function m.register(name, def)
         end,
 
         on_punch = function(self, puncher)
-            self.enemy = puncher
+            if m.valid_enemy(self, puncher) then
+                self.enemy = puncher
+            end
             m.fire_event(self, {name = "hit"})
         end,
     })
+end
+
+function m.valid_enemy(self, obj, find)
+    if obj:is_player() then
+        return true
+    else
+        local ent = obj:get_luaentity()
+        if ent.tigris_mob and (ent.def.level < self.def.level or not find) and ent.def.group ~= self.def.group then
+            return true
+        end
+    end
+
+    return false
 end
 
 tigris.include("state.lua")
@@ -194,8 +217,19 @@ tigris.mobs.nodes = {
 }
 
 -- Passive.
-tigris.include("sheep.lua")
+tigris.include("mobs/sheep.lua")
 
 -- Aggressive.
-tigris.include("obsidian_spitter.lua")
-tigris.include("wolf.lua")
+tigris.include("mobs/wolf.lua")
+
+-- Demonic.
+--[[
+Naming convention:
+Domain: Ur (Underground), Se (Surface), Lu (Sky)
+Element: Chi (Fire), Mi (Water), La (Earth), Tha (Air)
+Danger: Ko (Hard), Ja (Medium), Ve (Easy)
+--]]
+--- Greater.
+tigris.include("mobs/urchija.lua")
+--- Lesser.
+tigris.include("mobs/obsidian_spitter.lua")
