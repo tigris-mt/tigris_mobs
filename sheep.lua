@@ -105,7 +105,7 @@ for _,color in ipairs({"white", "black"}) do
         light_min = 0,
         light_max = minetest.LIGHT_MAX,
 
-        chance = 5000,
+        chance = 10000,
 
         nodes = tigris.mobs.nodes.dirt,
     })
