@@ -25,6 +25,8 @@ tigris.mobs.register("tigris_mobs:wolf", {
     drops = {
         {100, "mobs:meat_raw"},
         {100, "tigris_mobs:bone"},
+        {100, "tigris_mobs:fang"},
+        {25, "tigris_mobs:fang"},
         {25, "tigris_mobs:eye"},
         {15, "tigris_mobs:eye"},
     },

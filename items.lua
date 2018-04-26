@@ -27,3 +27,8 @@ minetest.register_craftitem("tigris_mobs:eye", {
     inventory_image = "tigris_mobs_eye.png",
     on_use = minetest.item_eat(1), -- !
 })
+
+minetest.register_craftitem("tigris_mobs:fang", {
+    description = "Fang",
+    inventory_image = "tigris_mobs_fang.png",
+})
