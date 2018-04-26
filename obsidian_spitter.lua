@@ -67,7 +67,7 @@ tigris.mobs.register_spawn("tigris_mobs:obsidian_spitter", {
     ymin = tigris.world_limits.min.y,
 
     light_min = 0,
-    light_max = 4,
+    light_max = 6,
 
     chance = 10000,
 
