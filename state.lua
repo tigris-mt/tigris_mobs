@@ -60,7 +60,7 @@ function m.state(self, dtime, def)
             if context.script.events[event.name] then
                 m.fire_event(self, event)
             else
-                minetest.log("warning", def.name .. " with invalid event: " .. tostring(event.name))
+                minetest.log("warning", def.name .. " with invalid event: " .. tostring(state) .. ":" .. tostring(event.name))
             end
         end
     else

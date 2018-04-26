@@ -32,6 +32,8 @@ function m.register(name, def)
         selectionbox = def.collision or def.box[1],
         hp_max = 1,
 
+        tigris_mob = name,
+
         visual = "wielditem",
         visual_size = {x = 1, y = 1},
         textures = {name},
@@ -117,17 +119,13 @@ function m.register(name, def)
                 self.falling = self.falling + dtime
             end
 
-            if self._data.timeout and os.time() - self._data.created > self._data.timeout then
-                self.object:set_hp(0)
-            end
-
             if self.object:get_hp() <= 0 then
                 self:on_death()
                 self.object:remove()
                 return
             end
 
-            self.infotext = ("%d/%d ♥"):format(self.object:get_hp(), self.hp_max)
+            self.infotext = ("%d/%d ♥ %s"):format(self.object:get_hp(), self.hp_max, self._data.state)
             self.object:set_properties(self)
 
             tigris.mobs.state(self, dtime, def)
@@ -136,7 +134,7 @@ function m.register(name, def)
         end,
 
         on_punch = function(self, puncher)
-            self.puncher = puncher
+            self.enemy = puncher
             m.fire_event(self, {name = "hit"})
         end,
     })
@@ -145,4 +143,16 @@ end
 tigris.include("state.lua")
 tigris.include("items.lua")
 
+tigris.mobs.nodes = {
+    dirt = {
+        "group:dirt",
+        "group:soil",
+    },
+
+    sand = {
+        "group:sand",
+    },
+}
+
 tigris.include("sheep.lua")
+tigris.include("wolf.lua")

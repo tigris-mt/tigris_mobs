@@ -20,6 +20,8 @@ for _,color in ipairs({"white", "black"}) do
             "wool_" .. color .. ".png^tigris_mobs_sheep_face.png",
         },
 
+        level = 1,
+
         drops = {
             {100, "mobs:meat_raw"},
             {100, "tigris_mobs:bone"},
@@ -34,13 +36,7 @@ for _,color in ipairs({"white", "black"}) do
             "group:flora",
         },
 
-        habitat_nodes = {
-            "group:flora",
-            "group:grass",
-            "group:dirt",
-            "group:soil",
-            "group:sand",
-        },
+        habitat_nodes = tigris.mobs.nodes.dirt,
 
         on_init = function(self, data)
             self.hp_max = 4
@@ -52,8 +48,11 @@ for _,color in ipairs({"white", "black"}) do
         script = {
             wander = {
                 actions = {
+                    "enemy_reset",
+                    "timeout",
                     "find_food",
                     "find_habitat",
+                    "find_random",
                 },
                 events = {
                     found = "goto",
@@ -94,7 +93,7 @@ for _,color in ipairs({"white", "black"}) do
                     hit = "flee",
                     timeout = "wander",
                     escaped = "wander",
-                    stuck = "flee",
+                    stuck = "wander",
                 }
             },
         },

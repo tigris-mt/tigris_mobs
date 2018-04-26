@@ -15,7 +15,7 @@ function m.go(self, context, target, speed, invert)
     local pos = self.object:getpos()
     local cvel = self.object:getvelocity()
 
-    if not invert and vector.distance(pos, target) < 1 then
+    if not invert and vector.distance(pos, target) < 1.5 then
         self.object:setvelocity(vector.new(0, 0, 0))
         return {name = "arrived", data = {
             target = target,
@@ -42,14 +42,16 @@ function m.go(self, context, target, speed, invert)
 
     if self._data.jump then
         self._data.glp = self._data.glp or pos
-        local dojump = solid(vector.add(pos, vector.new(vel.x, 0, vel.z))) and solid(vector.add(pos, vector.new(0, -1, 0)))
-        if dojump or vector.distance(pos, self._data.glp) < speed * context.dtime * 0.1 then
-            local fok = not solid(vector.add(pos, vector.new(vel.x, 1, vel.z))) and not solid(vector.add(pos, vector.new(vel.x, 2, vel.z)))
-            local aok = not solid(vector.add(pos, vector.new(0, 1, 0))) and not solid(vector.add(pos, vector.new(0, 2, 0)))
-            if fok and aok then
-                vel.y = self._data.jump
-            else
-                return {name = "stuck"}
+        if vector.distance(self._data.glp, pos) > 0.1 * context.dtime then
+            local dojump = solid(vector.add(pos, vector.new(vel.x, 0, vel.z))) and solid(vector.add(pos, vector.new(0, -1, 0)))
+            if dojump or vector.distance(pos, self._data.glp) < speed * context.dtime * 0.1 then
+                local fok = not solid(vector.add(pos, vector.new(vel.x, 1, vel.z))) and not solid(vector.add(pos, vector.new(vel.x, 2, vel.z)))
+                local aok = not solid(vector.add(pos, vector.new(0, 1, 0))) and not solid(vector.add(pos, vector.new(0, 2, 0)))
+                if fok and aok then
+                    vel.y = self._data.jump
+                else
+                    return {name = "stuck"}
+                end
             end
         end
         self._data.glp = pos
@@ -62,10 +64,21 @@ m.register_state("wander", {
     func = function(self, context) return m.state_timeout(self, context, 15) end,
 })
 
+m.register_state("fight", {
+    func = function() end,
+})
+
 m.register_state("goto", {
     func = function(self, context)
-        local target = (type(context.data.target) == "table") and context.data.target or context.data.target:getpos()
-        return m.go(self, context, target, self._data.speed) or m.state_timeout(self, context, 15)
+        local target = context.data.target and context.data.target or (self.enemy and self.enemy:getpos())
+        local g
+        if target then
+            g = m.go(self, context, target, self._data.speed)
+            if g and g.name == "arrived" and not context.data.target then
+                g = {name = "arrived_entity"}
+            end
+        end
+        return g or m.state_timeout(self, context, 15)
     end,
 })
 
@@ -90,15 +103,32 @@ m.register_state("flee", {
     func = function(self, context)
         local target
         context.data.punch_pos = context.data.punch_pos or self.object:getpos()
-        if self.puncher then
-            target = self.puncher:getpos()
-            if vector.distance(self.object:getpos(), target) < 12 then
+        if self.enemy then
+            target = self.enemy:getpos()
+            local dist = vector.distance(self.object:getpos(), target)
+            if dist < 12 then
                 m.reset_timeout(self, context)
+            elseif dist > 16 then
+                return {name = "escaped"}
             end
         else
             target = context.data.punch_pos
         end
         return m.go(self, context, target, self._data.fast_speed, true) or m.state_timeout(self, context, 15)
+    end,
+})
+
+m.register_action("find_target", {
+    func = function(self, context)
+        for _,obj in ipairs(minetest.get_objects_inside_radius(self.object:getpos(), 16)) do
+            if obj:is_player() then
+                self.enemy = obj
+                return {name = "found"}
+            elseif obj:get_luaentity().tigris_mob and obj:get_luaentity().def.level < context.def.level then
+                self.enemy = obj
+                return {name = "found"}
+            end
+        end
     end,
 })
 
@@ -129,6 +159,14 @@ m.register_action("find_habitat", {
     end,
 })
 
+m.register_action("find_random", {
+    func = function(self, context)
+        return {name = "found", data = {
+            target = vector.add(self.object:getpos(), vector.new((math.random() - 0.5) * 2 * 16, 0, (math.random() - 0.5) * 2 * 16)),
+        }}
+    end,
+})
+
 m.register_action("check_food", {
     func = function(self, context)
         if context.data.target then
@@ -137,6 +175,69 @@ m.register_action("check_food", {
                     target = context.data.target,
                 }}
             end
+        end
+    end,
+})
+
+m.register_action("timeout", {
+    func = function(self, context)
+        if self._data.timeout and os.time() - self._data.created > self._data.timeout then
+            self.object:remove()
+        end
+    end,
+})
+
+m.register_action("check_hp", {
+    func = function(self, context)
+        if self.object:get_hp() <= self.hp_max / 2 then
+            return {name = "low_hp"}
+        end
+    end,
+})
+
+m.register_action("check_target", {
+    func = function(self, context)
+        if self.enemy and (not self.enemy:getpos() or vector.distance(self.object:getpos(), self.enemy:getpos()) > 32) then
+            self.enemy = nil
+            return {name = "gone"}
+        end
+    end,
+})
+
+m.register_action("regenerate", {
+    func = function(self, context)
+        self.regen_timer = (self.regen_timer or 0) + context.dtime
+        if self._data.regen and self.regen_timer > self._data.regen then
+            self.regen_timer = 0
+            self.object:set_hp(self.object:get_hp() + 1)
+        end
+    end,
+})
+
+m.register_action("fight_tick", {
+    func = function(self, context)
+        self.fight_timer = (self.fight_timer or 0) + context.dtime
+    end,
+})
+
+m.register_action("enemy_reset", {
+    func = function(self, context)
+        self.enemy = nil
+    end,
+})
+
+m.register_action("fight", {
+    func = function(self, context)
+        if self.fight_timer > 1 and self.enemy and self.enemy:getpos() then
+            local d = {}
+            for k,v in pairs(self._data.damage) do
+                d[k] = v * self.fight_timer
+            end
+            tigris.damage.apply(self.enemy, d)
+            self.fight_timer = 0
+            return {name = "done"}
+        else
+            return {name = "wait"}
         end
     end,
 })
