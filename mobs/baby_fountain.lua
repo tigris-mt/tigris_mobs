@@ -14,6 +14,7 @@ tigris.mobs.register("tigris_mobs:baby_fountain", {
     drops = {
         {75, "tigris_mobs:water_lung"},
         {25, "tigris_mobs:water_lung"},
+        {15, "tigris_mobs:water_lung 2"},
     },
 
     on_init = function(self, data)
