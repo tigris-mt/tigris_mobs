@@ -1,8 +1,9 @@
 local m = {}
 tigris.mobs = m
 
-function m.spawn(name, pos)
+function m.spawn(name, pos, owner)
     local obj = minetest.add_entity(pos, name)
+    obj:get_luaentity().faction = owner and tigris.player.faction(owner) or nil
     return obj
 end
 
@@ -24,7 +25,7 @@ function m.register(name, def)
         groups = {not_in_creative_inventory = 1, tigris_mob = 1},
 
         on_place = function(itemstack, placer, pointed_thing)
-            m.spawn(name, minetest.get_pointed_thing_position(pointed_thing, true))
+            m.spawn(name, minetest.get_pointed_thing_position(pointed_thing, true), placer:get_player_name())
             itemstack:take_item()
             return itemstack
         end,
@@ -90,6 +91,7 @@ function m.register(name, def)
                     self[k] = v
                 end
                 self._data.p = nil
+                self.faction = self._data.faction or self.faction
                 self.object:set_hp(self._data.hp or 0)
             end
 
@@ -110,6 +112,7 @@ function m.register(name, def)
         get_staticdata = function(self)
             self._data.p = self.object:get_properties()
             self._data.hp = self.object:get_hp()
+            self._data.faction = self.faction
             return minetest.serialize(self._data)
         end,
 
@@ -171,7 +174,8 @@ function m.register(name, def)
                 return
             end
 
-            self.infotext = ("%s %d/%d ♥"):format(def.description, self.object:get_hp(), self.hp_max)
+            self.infotext = ("%s %d/%d ♥%s"):format(def.description, self.object:get_hp(), self.hp_max,
+                self.faction and (" " .. self.faction) or "")
             self.object:set_properties(self)
 
             tigris.mobs.state(self, dtime, def)
@@ -190,11 +194,11 @@ end
 
 function m.valid_enemy(self, obj, find)
     if obj:is_player() then
-        return true
+        return not self.faction or tigris.player.faction(obj:get_player_name()) ~= self.faction
     else
         local ent = obj:get_luaentity()
         if ent.tigris_mob and (ent.def.level < self.def.level or not find) and ent.def.group ~= self.def.group then
-            return true
+            return (not self.faction) or (not ent.faction) or (ent.faction ~= self.faction)
         end
     end
 
