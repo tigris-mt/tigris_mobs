@@ -217,6 +217,7 @@ tigris.mobs.nodes = {
 }
 
 -- Passive.
+tigris.include("mobs/rat.lua")
 tigris.include("mobs/sheep.lua")
 
 -- Aggressive.
