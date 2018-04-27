@@ -220,7 +220,7 @@ tigris.include("mobs/sheep.lua")
 tigris.include("mobs/baby_fountain.lua")
 
 -- Aggressive.
-tigris.include("mobs/sand_shambler.lua")
+tigris.include("mobs/shamblers.lua")
 tigris.include("mobs/wolf.lua")
 
 -- Demonic.
