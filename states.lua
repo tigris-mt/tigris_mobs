@@ -261,7 +261,7 @@ m.register_action("fight", {
         if self.fight_timer > 1 and self.enemy and self.enemy:getpos() then
             local d = {}
             for k,v in pairs(self._data.damage) do
-                d[k] = v * self.fight_timer
+                d[k] = v
             end
             tigris.damage.apply(self.enemy, d, self.object)
             self.fight_timer = 0
