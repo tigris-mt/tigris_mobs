@@ -130,7 +130,7 @@ register("tigris_mobs:sand_shambler", {
     light = minetest.LIGHT_MAX,
     damage = {fleshy = 2, heat = 1},
     level = 2,
-    chance = 7000,
+    chance = 5000,
     strength = 1,
     armor = {fleshy = 100, heat = 30},
     drops = {
@@ -149,7 +149,7 @@ register("tigris_mobs:dirt_shambler", {
     light = minetest.LIGHT_MAX / 2,
     damage = {fleshy = 2},
     level = 2,
-    chance = 10000,
+    chance = 7000,
     strength = 1,
     drops = {
         {80, "default:dirt"},
@@ -165,7 +165,7 @@ register("tigris_mobs:ice_shambler", {
     light = minetest.LIGHT_MAX,
     damage = {fleshy = 1, cold = 3},
     level = 2,
-    chance = 7000,
+    chance = 5000,
     strength = 0.75,
     armor = {fleshy = 75, cold = 15},
     drops = {
@@ -184,7 +184,7 @@ register("tigris_mobs:stone_shambler", {
     light = minetest.LIGHT_MAX / 2,
     damage = {fleshy = 4},
     level = 3,
-    chance = 10000,
+    chance = 8000,
     strength = 2,
     armor = {fleshy = 50, cold = 50, heat = 50},
     drops = {
