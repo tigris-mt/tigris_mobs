@@ -1,45 +1,39 @@
-tigris.mobs.register("tigris_mobs:wolf", {
-    description = "Wolf",
-    collision = {-0.4, -0.4, -0.4, 0.4, 0.4, 0.4},
+tigris.mobs.register("tigris_mobs:sand_shambler", {
+    description = "Sand Shambler",
+    collision = {-0.4, 0, -0.4, 0.4, 2, 0.4},
     box = {
-        {-0.25, 0, -0.5, 0.25, 0.6, 0.5},
-        {-0.25, -0.5, -0.5, -0.1, 0, -0.35},
-        {0.1, -0.5, -0.5, 0.25, 0, -0.35},
-        {-0.25, -0.5, 0.35, -0.1, 0, 0.5},
-        {0.1, -0.5, 0.35, 0.25, 0, 0.5},
-        {-0.25, 0, -0.5, 0.25, 0.5, -0.75},
-        {-0.25, 0, -0.5, 0.25, 0.25, -1.2},
-        {-0.1, 0.4, 0.5, 0.1, 0.5, 0.75},
+        {-0.4, 1, -0.4, 0.4, 2, 0.4},
+        {-0.4, 0, -0.1, -0.3, 1, 0.1},
+        {0.3, 0, -0.1, 0.4, 1, 0.1},
     },
     textures = {
-        "wool_dark_grey.png",
-        "wool_dark_grey.png",
-        "wool_dark_grey.png",
-        "wool_dark_grey.png",
-        "wool_dark_grey.png",
-        "wool_dark_grey.png^tigris_mobs_wolf_face.png",
+        "default_sand.png",
+        "default_sand.png",
+        "default_sand.png",
+        "default_sand.png",
+        "default_sand.png",
+        "default_sand.png^tigris_mobs_shambler_face.png",
     },
 
     group = "hunters",
     level = 2,
 
     drops = {
-        {100, "mobs:meat_raw"},
-        {100, "tigris_mobs:bone"},
-        {100, "tigris_mobs:fang"},
-        {25, "tigris_mobs:fang"},
-        {25, "tigris_mobs:eye"},
-        {15, "tigris_mobs:eye"},
+        {80, "default:sand"},
+        {50, "default:sand"},
+        {40, "default:desert_sand"},
+        {40, "default:desert_sand"},
+        {5, "tigris_mobs:cursed_brain"},
     },
 
-    habitat_nodes = {"group:soil"},
+    habitat_nodes = {"group:sand"},
 
     on_init = function(self, data)
         self.hp_max = 6
         data.jump = 5
-        data.speed = 3.5
-        data.fast_speed = 4
-        data.damage = {fleshy = 2}
+        data.speed = 3
+        data.fast_speed = 3
+        data.damage = {fleshy = 2, heat = 1}
         data.regen = 5
     end,
 
@@ -117,14 +111,14 @@ tigris.mobs.register("tigris_mobs:wolf", {
     },
 })
 
-tigris.mobs.register_spawn("tigris_mobs:wolf", {
+tigris.mobs.register_spawn("tigris_mobs:sand_shambler", {
     ymax = tigris.world_limits.max.y,
     ymin = -24,
 
     light_min = 0,
     light_max = minetest.LIGHT_MAX,
 
-    chance = 20000,
+    chance = 7000,
 
-    nodes = {"group:soil"},
+    nodes = {"group:sand"},
 })

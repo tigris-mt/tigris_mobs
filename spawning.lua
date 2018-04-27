@@ -57,7 +57,7 @@ function tigris.mobs.register_spawn(mob, def)
 
             local obj = tigris.mobs.spawn(mob, pos)
             if obj then
-                minetest.log("Spawned " .. mob .. " at " .. minetest.pos_to_string(pos) .. " level " .. ml .. " <= " .. dl)
+                minetest.log("Spawned " .. mob .. " at " .. minetest.pos_to_string(pos) .. " level " .. ml .. " <= " .. dl .. " " .. node.name)
             else
                 minetest.log("Failed to spawn " .. mob .. " at " .. minetest.pos_to_string(pos))
             end

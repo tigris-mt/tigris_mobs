@@ -37,7 +37,7 @@ for _,color in ipairs({"white", "black"}) do
             "group:flora",
         },
 
-        habitat_nodes = tigris.mobs.nodes.dirt,
+        habitat_nodes = {"group:soil"},
 
         on_init = function(self, data)
             self.hp_max = 4
@@ -108,6 +108,6 @@ for _,color in ipairs({"white", "black"}) do
 
         chance = 10000,
 
-        nodes = tigris.mobs.nodes.dirt,
+        nodes = {"group:soil"},
     })
 end

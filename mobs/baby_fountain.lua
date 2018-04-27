@@ -13,6 +13,7 @@ tigris.mobs.register("tigris_mobs:baby_fountain", {
 
     drops = {
         {75, "tigris_mobs:water_lung"},
+        {25, "tigris_mobs:water_lung"},
     },
 
     on_init = function(self, data)
@@ -20,10 +21,10 @@ tigris.mobs.register("tigris_mobs:baby_fountain", {
         data.regen = 2
         data.drown = 0
         data.float = false
-        data.teleport_time = 15
+        data.teleport_time = 30
     end,
 
-    habitat_nodes = tigris.mobs.nodes.dirt,
+    habitat_nodes = {"group:soil"},
 
     start = "wander",
 
@@ -70,7 +71,7 @@ tigris.mobs.register_spawn("tigris_mobs:baby_fountain", {
 
     chance = 30000,
 
-    nodes = tigris.mobs.nodes.dirt,
+    nodes = {"group:soil"},
 })
 
 tigris.mobs.register_action("spew_water", {

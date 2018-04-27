@@ -214,23 +214,13 @@ tigris.include("state.lua")
 tigris.include("items.lua")
 tigris.include("spawning.lua")
 
-tigris.mobs.nodes = {
-    dirt = {
-        "group:dirt",
-        "group:soil",
-    },
-
-    sand = {
-        "group:sand",
-    },
-}
-
 -- Passive.
 tigris.include("mobs/rat.lua")
 tigris.include("mobs/sheep.lua")
 tigris.include("mobs/baby_fountain.lua")
 
 -- Aggressive.
+tigris.include("mobs/sand_shambler.lua")
 tigris.include("mobs/wolf.lua")
 
 -- Demonic.

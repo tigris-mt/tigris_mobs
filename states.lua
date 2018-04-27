@@ -213,14 +213,24 @@ m.register_action("check_hp", {
 
 m.register_action("check_target", {
     func = function(self, context)
+        local rc = true
         if self.enemy and self.enemy:getpos() then
             if vector.distance(self.object:getpos(), self.enemy:getpos()) > 32 then
                 self.enemy = nil
-                return {name = "gone"}
+                rc = false
             end
         else
-            return {name = "gone"}
+            rc = false
         end
+        if not rc then
+            if self.had_enemy then
+                self.had_enemy = false
+                return {name = "gone"}
+            else
+                return
+            end
+        end
+        self.had_enemy = true
     end,
 })
 
