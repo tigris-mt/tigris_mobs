@@ -25,7 +25,7 @@ minetest.register_craftitem("tigris_mobs:bone", {
 minetest.register_craftitem("tigris_mobs:eye", {
     description = "Eye",
     inventory_image = "tigris_mobs_eye.png",
-    on_use = minetest.item_eat(1), -- !
+    on_use = minetest.item_eat(1),
 })
 
 minetest.register_craftitem("tigris_mobs:fang", {
@@ -36,5 +36,11 @@ minetest.register_craftitem("tigris_mobs:fang", {
 minetest.register_craftitem("tigris_mobs:cursed_brain", {
     description = "Cursed Brain",
     inventory_image = "tigris_mobs_cursed_brain.png",
-    on_use = minetest.item_eat(1), -- !
+    on_use = minetest.item_eat(1),
+})
+
+minetest.register_craftitem("tigris_mobs:water_lung", {
+    description = "Water Lung",
+    inventory_image = "tigris_mobs_water_lung.png",
+    on_use = minetest.item_eat(1),
 })

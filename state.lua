@@ -38,8 +38,12 @@ function m.fire_event(self, event)
         return
     end
     apply_global(self.def, context)
-    assert(context.script.events[event.name], "Invalid event: " .. tostring(event.name))
-    m.reset_state(self, context.script.events[event.name], event.data)
+    local sname = context.script.events[event.name]
+    if sname == "ignore" then
+        return
+    end
+    assert(sname, "Invalid event: " .. tostring(event.name))
+    m.reset_state(self, sname, event.data)
 end
 
 function m.state(self, dtime, def)

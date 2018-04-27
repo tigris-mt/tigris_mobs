@@ -127,7 +127,7 @@ m.register_state("teleport", {
         local target = context.data.target and context.data.target or (self.enemy and self.enemy:getpos() and vector.add(self.enemy:getpos(),
             self.enemy:get_properties().collisionbox[5] * 0.75))
         self.teleport_timer = (self.teleport_timer or 0) + context.dtime
-        if self.teleport_timer > 5 then
+        if self.teleport_timer > (self._data.teleport_time or 5) then
             if target then
                 self.object:setpos(target)
             end

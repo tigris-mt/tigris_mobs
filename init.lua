@@ -54,6 +54,8 @@ function m.register(name, def)
                 fast_speed = 2,
                 drown = 1,
                 node_damage = true,
+                float = true,
+                teleport_time = 5,
             }
 
             if def.on_init then
@@ -149,13 +151,13 @@ function m.register(name, def)
                 d = rn.damage_per_second * dtime
                 m.fire_event(self, {name = "node_damage"})
             elseif self._data.drown and liquid then
-                d = 1 * dtime
+                d = self._data.drown * dtime
                 m.fire_event(self, {name = "node_damage"})
             else
                 self.node_damage_inc = 0
             end
 
-            if liquid then
+            if liquid and self._data.float then
                 g = 0
                 self.object:setvelocity(vector.add(self.object:getvelocity(), vector.new(0, self.object:getvelocity().y < 0.5 and 0.5 or 0, 0)))
             end
@@ -197,6 +199,9 @@ function m.valid_enemy(self, obj, find)
         return not self.faction or tigris.player.faction(obj:get_player_name()) ~= self.faction
     else
         local ent = obj:get_luaentity()
+        if not ent then
+            return false
+        end
         if ent.tigris_mob and (ent.def.level < self.def.level or not find) and ent.def.group ~= self.def.group then
             return (not self.faction) or (not ent.faction) or (ent.faction ~= self.faction)
         end
@@ -223,6 +228,7 @@ tigris.mobs.nodes = {
 -- Passive.
 tigris.include("mobs/rat.lua")
 tigris.include("mobs/sheep.lua")
+tigris.include("mobs/baby_fountain.lua")
 
 -- Aggressive.
 tigris.include("mobs/wolf.lua")
