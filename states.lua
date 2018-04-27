@@ -197,7 +197,7 @@ m.register_action("check_food", {
 
 m.register_action("timeout", {
     func = function(self, context)
-        if self._data.timeout and os.time() - self._data.created > self._data.timeout then
+        if not self.faction and self._data.timeout and os.time() - self._data.created > self._data.timeout then
             self.object:remove()
         end
     end,
