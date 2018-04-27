@@ -195,6 +195,10 @@ function m.register(name, def)
 end
 
 function m.valid_enemy(self, obj, find)
+    if not obj then
+        return false
+    end
+
     if obj:is_player() then
         return not self.faction or tigris.player.faction(obj:get_player_name()) ~= self.faction
     else
