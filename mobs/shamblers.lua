@@ -111,7 +111,7 @@ local function register(name, def)
 
     tigris.mobs.register_spawn(name, {
         ymax = def.underground and 0 or tigris.world_limits.max.y,
-        ymin = def.underground and tigris.world_limits.min.y or -24,
+        ymin = def.underground and tigris.world_limits.min.y or (def.ymin or -24),
 
         light_min = 0,
         light_max = def.light,
@@ -175,7 +175,6 @@ register("tigris_mobs:ice_shambler", {
     },
 })
 
-
 register("tigris_mobs:stone_shambler", {
     desc = "Stone Shambler",
     nodes = {"group:stone"},
@@ -193,5 +192,26 @@ register("tigris_mobs:stone_shambler", {
         {30, "default:iron_lump 3"},
         {30, "default:copper_lump 3"},
         {30, "default:tin_lump 3"},
+    },
+})
+
+register("tigris_mobs:mese_shambler", {
+    desc = "Mese Shambler",
+    nodes = {"group:stone"},
+    texture = "default_mese_block.png",
+    underground = true,
+    ymin = -300,
+    light = minetest.LIGHT_MAX / 2,
+    damage = {fleshy = 6},
+    level = 4,
+    chance = 15000,
+    strength = 3,
+    armor = {fleshy = 50, cold = 75, heat = 75},
+    drops = {
+        {100, "tigris_mobs:mese_heart"},
+        {75, "default:mese_crystal"},
+        {75, "default:mese_crystal"},
+        {75, "default:mese_crystal"},
+        {10, "default:mese"},
     },
 })

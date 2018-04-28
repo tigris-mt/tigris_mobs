@@ -225,7 +225,4 @@ Element: Chi (Fire), Mi (Water), La (Earth), Tha (Air)
 Danger: Ko (Hard), Ja (Medium), Ve (Easy)
 --]]
 
-local mp = minetest.get_modpath(minetest.get_current_modname()) .. "/mobs"
-for _,entry in ipairs(minetest.get_dir_list(mp, false)) do
-    tigris.include("mobs/" .. entry)
-end
+tigris.include_dir("mobs")

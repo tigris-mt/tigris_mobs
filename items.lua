@@ -44,3 +44,13 @@ minetest.register_craftitem("tigris_mobs:water_lung", {
     inventory_image = "tigris_mobs_water_lung.png",
     on_use = minetest.item_eat(1),
 })
+
+minetest.register_craftitem("tigris_mobs:mese_heart", {
+    description = "Mese Heart",
+    inventory_image = "default_mese_block.png^tigris_mobs_heart_mask.png^[makealpha:0,0,0",
+})
+
+minetest.register_craft({
+    output = "default:mese_crystal 6",
+    recipe = {{"tigris_mobs:mese_heart"}},
+})
