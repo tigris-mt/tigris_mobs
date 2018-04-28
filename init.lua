@@ -218,23 +218,14 @@ tigris.include("state.lua")
 tigris.include("items.lua")
 tigris.include("spawning.lua")
 
--- Passive.
-tigris.include("mobs/rat.lua")
-tigris.include("mobs/sheep.lua")
-tigris.include("mobs/baby_fountain.lua")
-
--- Aggressive.
-tigris.include("mobs/shamblers.lua")
-tigris.include("mobs/wolf.lua")
-
--- Demonic.
 --[[
-Naming convention:
+Demonic Naming convention:
 Domain: Ur (Underground), Se (Surface), Lu (Sky)
 Element: Chi (Fire), Mi (Water), La (Earth), Tha (Air)
 Danger: Ko (Hard), Ja (Medium), Ve (Easy)
 --]]
---- Greater.
-tigris.include("mobs/urchija.lua")
---- Lesser.
-tigris.include("mobs/obsidian_spitter.lua")
+
+local mp = minetest.get_modpath(minetest.get_current_modname()) .. "/mobs"
+for _,entry in ipairs(minetest.get_dir_list(mp, false)) do
+    tigris.include("mobs/" .. entry)
+end
