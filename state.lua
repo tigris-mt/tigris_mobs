@@ -86,4 +86,11 @@ function m.state(self, dtime, def)
     end
 end
 
+-- The nil action.
+m.register_action("", {
+    func = function()
+        return
+    end,
+})
+
 tigris.include("states.lua")

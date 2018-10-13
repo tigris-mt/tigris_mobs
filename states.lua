@@ -90,7 +90,7 @@ m.register_state("standing", {
 m.register_state("eat", {
     func = function(self, context)
         if minetest.find_node_near(context.data.target, 0, context.def.food_nodes, true) then
-            self.eaten = true
+            self.eaten = minetest.get_gametime()
             self.object:set_hp(self.hp_max)
             minetest.remove_node(context.data.target)
             return {name = "done"}
@@ -162,7 +162,7 @@ end
 
 m.register_action("find_food", {
     func = function(self, context)
-        if self.object:get_hp() >= self.hp_max and self.eaten then
+        if self.object:get_hp() >= self.hp_max and (minetest.get_gametime() - (self.eaten or 0) < 60 * 15) then
             return
         end
         return find_node(self, context, context.def.food_nodes, true)

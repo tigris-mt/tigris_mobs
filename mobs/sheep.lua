@@ -46,57 +46,9 @@ for _,color in ipairs({"white", "black"}) do
 
         start = "wander",
 
-        script = {
-            global = {
-                events = {
-                    hit = "flee",
-                    timeout = "wander",
-                    stuck = "wander",
-                    node_damage = "flee",
-                },
-            },
-
-            wander = {
-                actions = {
-                    "enemy_reset",
-                    "timeout",
-                    "find_food",
-                    "find_habitat",
-                    "find_random",
-                },
-                events = {
-                    found = "goto",
-                },
-            },
-
-            standing = {
-                actions = {
-                    "check_food",
-                },
-                events = {
-                    at_food = "eat",
-                },
-            },
-
-            eat = {
-                events = {
-                    done = "standing",
-                    gone = "wander",
-                },
-            },
-
-            goto = {
-                events = {
-                    arrived = "standing",
-                },
-            },
-
-            flee = {
-                events = {
-                    escaped = "wander",
-                }
-            },
-        },
+        script = tigris.mobs.common.peaceful({
+            eat = true,
+        }),
     })
 
     tigris.mobs.register_spawn("tigris_mobs:sheep_" .. color, {

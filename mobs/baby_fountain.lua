@@ -12,8 +12,9 @@ tigris.mobs.register("tigris_mobs:baby_fountain", {
     level = 1,
 
     drops = {
-        {75, "tigris_mobs:water_lung"},
-        {25, "tigris_mobs:water_lung"},
+        {75, "tigris_mobs:water_lung 2"},
+        {25, "tigris_mobs:water_lung 2"},
+        {15, "tigris_mobs:water_lung 2"},
         {15, "tigris_mobs:water_lung 2"},
     },
 
@@ -70,7 +71,7 @@ tigris.mobs.register_spawn("tigris_mobs:baby_fountain", {
     light_min = 0,
     light_max = minetest.LIGHT_MAX,
 
-    chance = 30000,
+    chance = 150000,
 
     nodes = {"group:soil"},
 })

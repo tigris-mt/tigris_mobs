@@ -30,38 +30,7 @@ tigris.mobs.register("tigris_mobs:obsidian_spitter", {
 
     start = "wander",
 
-    script = {
-        global = {
-            events = {
-                timeout = "wander",
-                hit = "fight",
-            },
-        },
-
-        wander = {
-            actions = {
-                "enemy_reset",
-                "fight_tick",
-                "timeout",
-                "regenerate",
-                "find_target",
-            },
-            events = {
-                found = "fight",
-            },
-        },
-
-        fight = {
-            actions = {
-                "fight_tick",
-                "throw",
-            },
-            events = {
-                wait = "wander",
-                done = "wander",
-            },
-        },
-    },
+    script = tigris.mobs.common.turret(),
 })
 
 tigris.mobs.register_spawn("tigris_mobs:obsidian_spitter", {

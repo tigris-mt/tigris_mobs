@@ -37,45 +37,7 @@ tigris.mobs.register("tigris_mobs:rat", {
     end,
 
     start = "wander",
-
-    script = {
-        global = {
-            events = {
-                hit = "flee",
-                timeout = "wander",
-                stuck = "wander",
-                node_damage = "flee",
-            },
-        },
-
-        wander = {
-            actions = {
-                "enemy_reset",
-                "timeout",
-                "find_habitat",
-                "find_random",
-            },
-            events = {
-                found = "goto",
-            },
-        },
-
-        standing = {
-            events = {},
-        },
-
-        goto = {
-            events = {
-                arrived = "standing",
-            },
-        },
-
-        flee = {
-            events = {
-                escaped = "wander",
-            }
-        },
-    },
+    script = tigris.mobs.common.peaceful(),
 })
 
 tigris.mobs.register_spawn("tigris_mobs:rat", {

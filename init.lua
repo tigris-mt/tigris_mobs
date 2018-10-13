@@ -9,7 +9,7 @@ m.spawn_factor = tonumber(minetest.settings:get("tigris.mobs.spawn_factor")) or 
 -- Spawn mob <name> at <pos> with optional <owner>.
 function m.spawn(name, pos, owner)
     local obj = minetest.add_entity(pos, name)
-    obj:get_luaentity().faction = owner and tigris.player.faction(owner) or nil
+    obj:get_luaentity().faction = owner and tigris.player_faction(owner) or nil
     return obj
 end
 
@@ -244,7 +244,7 @@ function m.valid_enemy(self, obj, find)
     end
 
     if obj:is_player() then
-        return not self.faction or tigris.player.faction(obj:get_player_name()) ~= self.faction
+        return not self.faction or tigris.player_faction(obj:get_player_name()) ~= self.faction
     else
         local ent = obj:get_luaentity()
         if not ent then
@@ -269,4 +269,5 @@ Element: Chi (Fire), Mi (Water), La (Earth), Tha (Air)
 Danger: Ko (Hard), Ja (Medium), Ve (Easy)
 --]]
 
+tigris.include("mob_common.lua")
 tigris.include_dir("mobs")

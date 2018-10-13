@@ -45,76 +45,7 @@ tigris.mobs.register("tigris_mobs:wolf", {
 
     start = "wander",
 
-    script = {
-        global = {
-            events = {
-                low_hp = "flee",
-                hit = "goto",
-                timeout = "wander",
-                stuck = "wander",
-                node_damage = "flee",
-            },
-        },
-
-        wander = {
-            actions = {
-                "enemy_reset",
-                "fight_tick",
-                "timeout",
-                "regenerate",
-                "find_target",
-                "find_habitat",
-                "find_random",
-            },
-            events = {
-                found = "goto",
-            },
-        },
-
-        goto = {
-            actions = {
-                "fight_tick",
-                "check_hp",
-                "check_target",
-            },
-            events = {
-                arrived = "standing",
-                arrived_entity = "fight",
-                gone = "wander",
-            },
-        },
-
-        standing = {
-            actions = {
-                "timeout",
-                "regenerate",
-                "fight_tick",
-            },
-            events = {},
-        },
-
-        fight = {
-            actions = {
-                "fight_tick",
-                "fight",
-            },
-            events = {
-                wait = "goto",
-                done = "goto",
-            },
-        },
-
-        flee = {
-            actions = {
-                "fight_tick",
-                "regenerate",
-            },
-            events = {
-                hit = "flee",
-                escaped = "wander",
-            }
-        },
-    },
+    script = tigris.mobs.common.hunter(),
 })
 
 tigris.mobs.register_spawn("tigris_mobs:wolf", {
