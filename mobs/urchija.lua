@@ -83,7 +83,7 @@ tigris.mobs.register("tigris_mobs:urchija", {
 })
 
 tigris.mobs.register_spawn("tigris_mobs:urchija", {
-    ymax = -400,
+    ymax = -600,
     ymin = tigris.world_limits.min.y,
 
     light_min = 0,
