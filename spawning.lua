@@ -3,7 +3,7 @@ function tigris.mobs.register_spawn(mob, def)
         nodenames = def.nodes,
         neighbors = {"air"},
         interval = 30,
-        chance = def.chance,
+        chance = def.chance / tigris.mobs.spawn_factor,
         label = mob,
 
         action = function(pos, node, _, all_count)
