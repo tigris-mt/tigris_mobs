@@ -33,6 +33,8 @@ local function register(name, def)
             data.fast_speed = 3
             data.damage = def.damage
             data.regen = 5
+            data.drown = def.drown or false
+            data.node_damage = def.node_damage or false
         end,
 
         start = "wander",
@@ -69,6 +71,8 @@ register("tigris_mobs:sand_shambler", {
         {40, "default:desert_sand"},
         {40, "default:desert_sand"},
     },
+    drown = 1,
+    node_damage = true,
 })
 
 register("tigris_mobs:dirt_shambler", {
@@ -85,6 +89,8 @@ register("tigris_mobs:dirt_shambler", {
         {80, "default:dirt"},
         {50, "default:dirt 2"},
     },
+    drown = 1,
+    node_damage = true,
 })
 
 register("tigris_mobs:ice_shambler", {
@@ -103,6 +109,7 @@ register("tigris_mobs:ice_shambler", {
         {25, "default:snow 6"},
         {25, "default:snowblock"},
     },
+    node_damage = true,
 })
 
 register("tigris_mobs:stone_shambler", {
