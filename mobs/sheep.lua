@@ -1,4 +1,5 @@
-for _,color in ipairs({"white", "black"}) do
+local colors = {"white", "black", "brown", "grey", "dark_grey"}
+for _,color in ipairs(colors) do
     tigris.mobs.register("tigris_mobs:sheep_" .. color, {
         description = "Sheep",
         collision = {-0.4, -0.4, -0.4, 0.4, 0.4, 0.4},
@@ -58,7 +59,7 @@ for _,color in ipairs({"white", "black"}) do
         light_min = 0,
         light_max = minetest.LIGHT_MAX,
 
-        chance = 10000,
+        chance = 5000 * #colors,
 
         nodes = {"group:soil"},
     })

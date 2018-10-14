@@ -9,6 +9,14 @@ minetest.register_node("tigris_mobs:spawner", {
     groups = {cracky = 1, level = 2},
     drop = "",
     on_timer = function(pos)
+        local meta = minetest.get_meta(pos)
+        local mob = meta:get_string("mob")
+
+        if meta:get_int("wait") == 1 then
+            minetest.add_entity(vector.add(pos, vector.new(0, -0.25, 0)), "tigris_mobs:spawner_item", mob)
+            meta:set_int("wait", 0)
+        end
+
         local n = 0
         for _,obj in ipairs(minetest.get_objects_inside_radius(pos, 6)) do
             if obj:get_luaentity() and obj:get_luaentity().tigris_mob then
@@ -19,8 +27,6 @@ minetest.register_node("tigris_mobs:spawner", {
             return true
         end
 
-        local meta = minetest.get_meta(pos)
-        local mob = meta:get_string("mob")
         local function try(a)
             for x=pos.x-2*a,pos.x+2*a do
             for y=pos.y-a,pos.y+a do
@@ -35,7 +41,7 @@ minetest.register_node("tigris_mobs:spawner", {
                 if ok then
                     local obj = tigris.mobs.spawn(mob, pos)
                     if obj then
-                        minetest.log("Spawned spawner " .. mob .. " at " .. minetest.pos_to_string(pos))
+                        minetest.log("Spawned (spawner) " .. mob .. " at " .. minetest.pos_to_string(pos))
                         return true
                     end
                 end
@@ -45,7 +51,7 @@ minetest.register_node("tigris_mobs:spawner", {
             return false
         end
         if not try(1) and not try(2) then
-            minetest.log("Failed to spawn spawner " .. mob .. " from " .. minetest.pos_to_string(pos))
+            minetest.log("Failed to spawn (spawner) " .. mob .. " from " .. minetest.pos_to_string(pos))
         end
         minetest.get_node_timer(pos):start(math.random(10, 40))
         return false
@@ -106,7 +112,7 @@ function tigris.mobs.set_spawner(pos, mob)
     tigris.mobs.clear_spawner(pos)
     local meta = minetest.get_meta(pos)
     meta:set_string("mob", mob)
-    minetest.add_entity(vector.add(pos, vector.new(0, -0.25, 0)), "tigris_mobs:spawner_item", mob)
+    meta:set_int("wait", 1)
     minetest.get_node_timer(pos):start(1)
 end
 

@@ -95,7 +95,7 @@ register("tigris_mobs:dirt_shambler", {
 
 register("tigris_mobs:ice_shambler", {
     desc = "Ice Shambler",
-    nodes = {"default:ice", "default:snow", "default:snowblock"},
+    nodes = {"default:ice", "default:snow", "default:snowblock", "default:permafrost_with_stones"},
     texture = "default_ice.png",
     underground = false,
     light = minetest.LIGHT_MAX,
