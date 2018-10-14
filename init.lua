@@ -261,6 +261,7 @@ end
 tigris.include("state.lua")
 tigris.include("items.lua")
 tigris.include("spawning.lua")
+tigris.include("spawner.lua")
 
 --[[
 Demonic Naming convention:
