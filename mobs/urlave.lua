@@ -75,3 +75,25 @@ for _,n in ipairs{
 } do
     tigris.mobs.register_urlave_infested(n[1], n[2])
 end
+
+minetest.register_ore({
+    ore_type = "scatter",
+    ore = "default:stone_urlave_infested",
+    wherein = "default:stone",
+    clust_scarcity = 13 * 13 * 13,
+    clust_num_ores = 1,
+    clust_size = 1,
+    y_max = tigris.world_limits.max.y,
+    y_min = tigris.world_limits.min.y,
+})
+
+minetest.register_ore({
+    ore_type = "scatter",
+    ore = "default:stone_urlave_infested",
+    wherein = "default:stone",
+    clust_scarcity = 24 * 24 * 24,
+    clust_num_ores = 2,
+    clust_size = 2,
+    y_max = -500,
+    y_min = tigris.world_limits.min.y,
+})
