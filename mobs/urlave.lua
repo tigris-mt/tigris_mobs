@@ -1,3 +1,4 @@
+-- Urlave - Annoying mob that infests stone blocks.
 tigris.mobs.register("tigris_mobs:urlave", {
     description = "Urlave",
     collision = {-0.25, -0.1, -0.5, 0.25, 0.1, 0.5},
@@ -22,6 +23,7 @@ tigris.mobs.register("tigris_mobs:urlave", {
 
     drops = {},
 
+    -- Will seek out infestable nodes.
     habitat_nodes = {"group:can_urlave_infest"},
 
     on_init = function(self, data)
@@ -34,12 +36,14 @@ tigris.mobs.register("tigris_mobs:urlave", {
     end,
 
     start = "wander",
+    -- Hunter with actions to alert other resting urlaves and infest blocks when inactive.
     script = tigris.mobs.common.hunter(nil, function(s)
         table.insert(s.flee.actions, "break_urlave_infested")
         table.insert(s.standing.actions, "urlave_infest")
     end),
 })
 
+-- Every x seconds, try to break other infested blocks to release the urlaves.
 local break_time = 10
 tigris.mobs.register_action("break_urlave_infested", {
     func = function(self, context)
@@ -56,6 +60,7 @@ tigris.mobs.register_action("break_urlave_infested", {
     end,
 })
 
+-- Search for infestable node and infest it.
 tigris.mobs.register_action("urlave_infest", {
     func = function(self, context)
         local pos = self.object:getpos()
@@ -71,6 +76,7 @@ tigris.mobs.register_action("urlave_infest", {
     end,
 })
 
+-- Create a new "_urlave_infested" node which will spawn an urlave when broken. Adds can_urlave_infest group to original node.
 function tigris.mobs.register_urlave_infested(node, groups)
     local def = table.copy(minetest.registered_nodes[node])
     def.description = "Urlave Infested " .. def.description
@@ -82,7 +88,7 @@ function tigris.mobs.register_urlave_infested(node, groups)
     minetest.override_item(node, {groups = passgroups})
 
     def.groups.tigris_mobs_urlave_infested = 1
-    for k,v in pairs(groups) do
+    for k,v in pairs(groups or {}) do
         def.groups[k] = v
     end
     def.on_destruct = function(pos)
@@ -91,6 +97,7 @@ function tigris.mobs.register_urlave_infested(node, groups)
     minetest.register_node(":" .. node .. "_urlave_infested", def)
 end
 
+-- Basic stone registry.
 for _,n in ipairs{
     {"default:stone", {cracky = 1}},
     {"default:cobble", {cracky = 1}},
@@ -102,6 +109,7 @@ for _,n in ipairs{
     tigris.mobs.register_urlave_infested(n[1], n[2])
 end
 
+-- Spawn infested stone mixed among normal stone.
 minetest.register_ore({
     ore_type = "scatter",
     ore = "default:stone_urlave_infested",
@@ -113,6 +121,7 @@ minetest.register_ore({
     y_min = tigris.world_limits.min.y,
 })
 
+-- Under y -500, possible to have groups of 2.
 minetest.register_ore({
     ore_type = "scatter",
     ore = "default:stone_urlave_infested",
