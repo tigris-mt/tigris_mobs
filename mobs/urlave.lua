@@ -22,7 +22,7 @@ tigris.mobs.register("tigris_mobs:urlave", {
 
     drops = {},
 
-    habitat_nodes = {"group:stone", "group:soil", "group:sand", "default:sandstonebrick"},
+    habitat_nodes = {"group:can_urlave_infest"},
 
     on_init = function(self, data)
         self.hp_max = 5
@@ -36,6 +36,7 @@ tigris.mobs.register("tigris_mobs:urlave", {
     start = "wander",
     script = tigris.mobs.common.hunter(nil, function(s)
         table.insert(s.flee.actions, "break_urlave_infested")
+        table.insert(s.standing.actions, "urlave_infest")
     end),
 })
 
@@ -55,11 +56,31 @@ tigris.mobs.register_action("break_urlave_infested", {
     end,
 })
 
+tigris.mobs.register_action("urlave_infest", {
+    func = function(self, context)
+        local pos = self.object:getpos()
+        local r = vector.new(2, 2, 2)
+        local poses = minetest.find_nodes_in_area(vector.subtract(pos, r), vector.add(pos, r), {"group:can_urlave_infest"})
+        if #poses > 0 then
+            local pos = poses[math.random(#poses)]
+            local node = minetest.get_node(pos)
+            self.object:set_hp(0)
+            node.name = node.name .. "_urlave_infested"
+            minetest.set_node(pos, node)
+        end
+    end,
+})
+
 function tigris.mobs.register_urlave_infested(node, groups)
     local def = table.copy(minetest.registered_nodes[node])
     def.description = "Urlave Infested " .. def.description
     def.drop = ""
     def.groups = def.groups or {}
+
+    local passgroups = table.copy(def.groups)
+    passgroups.can_urlave_infest = 1
+    minetest.override_item(node, {groups = passgroups})
+
     def.groups.tigris_mobs_urlave_infested = 1
     for k,v in pairs(groups) do
         def.groups[k] = v
@@ -72,6 +93,11 @@ end
 
 for _,n in ipairs{
     {"default:stone", {cracky = 1}},
+    {"default:cobble", {cracky = 1}},
+    {"default:stonebrick", {cracky = 1}},
+    {"default:mossycobble", {cracky = 1}},
+    {"default:sandstone", {cracky = 1}},
+    {"default:sandstonebrick", {cracky = 1}},
 } do
     tigris.mobs.register_urlave_infested(n[1], n[2])
 end
