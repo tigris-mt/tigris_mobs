@@ -50,15 +50,72 @@ minetest.register_node("tigris_mobs:spawner", {
         minetest.get_node_timer(pos):start(math.random(10, 40))
         return false
     end,
+    on_punch = function(pos, node, puncher)
+        local itemstack = puncher:get_wielded_item()
+        if minetest.get_item_group(itemstack:get_name(), "tigris_mob") > 0 then
+            tigris.mobs.set_spawner(pos, itemstack:get_name())
+        end
+    end,
     on_construct = function(pos)
         tigris.mobs.set_spawner(pos, "tigris_mobs:rat")
+    end,
+    on_destruct = function(pos)
+        tigris.mobs.clear_spawner(pos)
+    end,
+})
+
+minetest.register_entity("tigris_mobs:spawner_item", {
+    initial_properties = {
+        visual = "wielditem",
+        visual_size = {x = 0.35, y = 0.35},
+        automatic_rotate = math.pi / 4,
+        collisionbox = {0, 0, 0, 0, 0, 0},
+        textures = {"air"},
+        physical = false,
+    },
+
+    on_activate = function(self, staticdata)
+        if staticdata and staticdata ~= "" then
+            local p = self.object:get_properties()
+            p.textures = {staticdata}
+            local def = minetest.registered_entities[staticdata] and minetest.registered_entities[staticdata].mob_def
+            if def then
+                local box = def.collision or def.box[1]
+                local maxdiff = 0
+                maxdiff = math.max(maxdiff, math.abs(box[1] - box[4]))
+                maxdiff = math.max(maxdiff, math.abs(box[2] - box[5]))
+                maxdiff = math.max(maxdiff, math.abs(box[3] - box[6]))
+                local vs = 0.5 / maxdiff
+                p.visual_size = {x = vs, y = vs}
+            end
+            self.object:set_properties(p)
+            if minetest.get_node(self.object:getpos()).name ~= "tigris_mobs:spawner" then
+                self.object:remove()
+            end
+        else
+            self.object:remove()
+        end
+    end,
+
+    get_staticdata = function(self)
+        return self.object:get_properties().textures[1]
     end,
 })
 
 function tigris.mobs.set_spawner(pos, mob)
+    tigris.mobs.clear_spawner(pos)
     local meta = minetest.get_meta(pos)
     meta:set_string("mob", mob)
+    minetest.add_entity(vector.add(pos, vector.new(0, -0.25, 0)), "tigris_mobs:spawner_item", mob)
     minetest.get_node_timer(pos):start(1)
+end
+
+function tigris.mobs.clear_spawner(pos)
+    for _,obj in ipairs(minetest.get_objects_inside_radius(pos, 0.5)) do
+        if obj:get_luaentity() and obj:get_luaentity().name == "tigris_mobs:spawner_item" then
+            obj:remove()
+        end
+    end
 end
 
 local function is_type(node, min, max)
