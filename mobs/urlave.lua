@@ -22,7 +22,7 @@ tigris.mobs.register("tigris_mobs:urlave", {
 
     drops = {},
 
-    habitat_nodes = {"group:stone"},
+    habitat_nodes = {"group:stone", "group:soil", "group:sand", "default:sandstonebrick"},
 
     on_init = function(self, data)
         self.hp_max = 5

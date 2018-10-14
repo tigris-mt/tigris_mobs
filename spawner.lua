@@ -125,6 +125,7 @@ end
 local function random_mob(pos, min, max)
     local l = {
         "tigris_mobs:dirt_shambler",
+        "tigris_mobs:urlave",
     }
     if pos.y < -1000 then
         table.insert(l, "tigris_mobs:mese_shambler")
