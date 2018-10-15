@@ -44,11 +44,11 @@ tigris.mobs.register("tigris_mobs:urchija", {
 
         wander = {
             actions = {
-                "enemy_reset",
+                "other_reset",
                 "fight_tick",
                 "timeout",
                 "regenerate",
-                "find_target",
+                "find_enemy",
             },
             events = {
                 found = "teleport",

@@ -1,9 +1,9 @@
 local m = tigris.mobs
-m.register_action("find_target", {
+m.register_action("find_enemy", {
     func = function(self, context)
         for _,obj in ipairs(minetest.get_objects_inside_radius(self.object:getpos(), 16)) do
             if m.valid_enemy(self, obj, true) then
-                self.enemy = obj
+                self.other = obj
                 return {name = "found"}
             end
         end
@@ -59,7 +59,7 @@ m.register_action("check_food", {
 
 m.register_action("timeout", {
     func = function(self, context)
-        if not self.faction and self._data.timeout and os.time() - self._data.created > self._data.timeout then
+        if not self._data.tame and not self.faction and self._data.timeout and os.time() - self._data.created > self._data.timeout then
             self.object:remove()
         end
     end,
@@ -76,23 +76,23 @@ m.register_action("check_hp", {
 m.register_action("check_target", {
     func = function(self, context)
         local rc = true
-        if self.enemy and self.enemy:getpos() then
-            if vector.distance(self.object:getpos(), self.enemy:getpos()) > 32 then
-                self.enemy = nil
+        if self.other and self.other:getpos() then
+            if vector.distance(self.object:getpos(), self.other:getpos()) > 32 then
+                self.other = nil
                 rc = false
             end
         else
             rc = false
         end
         if not rc then
-            if self.had_enemy then
-                self.had_enemy = false
+            if self.had_target then
+                self.had_target = false
                 return {name = "gone"}
             else
                 return
             end
         end
-        self.had_enemy = true
+        self.had_target = true
     end,
 })
 
@@ -112,20 +112,20 @@ m.register_action("fight_tick", {
     end,
 })
 
-m.register_action("enemy_reset", {
+m.register_action("other_reset", {
     func = function(self, context)
-        self.enemy = nil
+        self.other = nil
     end,
 })
 
 m.register_action("fight", {
     func = function(self, context)
-        if self.fight_timer > 1 and self.enemy and self.enemy:getpos() then
+        if self.fight_timer > 1 and self.other and self.other:getpos() then
             local d = {}
             for k,v in pairs(self._data.damage) do
                 d[k] = v
             end
-            tigris.damage.apply(self.enemy, d, self.object)
+            tigris.damage.apply(self.other, d, self.object)
             self.fight_timer = 0
             return {name = "done"}
         else
@@ -136,10 +136,10 @@ m.register_action("fight", {
 
 m.register_action("throw", {
     func = function(self, context)
-        if self.fight_timer > 1 and self.enemy and self.enemy:getpos() then
+        if self.fight_timer > 1 and self.other and self.other:getpos() then
             local from = vector.add(self.object:getpos(), vector.new(0, self.object:get_properties().collisionbox[5] * 0.75, 0))
-            local to = self.enemy:getpos()
-            to.y = to.y + self.enemy:get_properties().collisionbox[5] * 0.75
+            local to = self.other:getpos()
+            to.y = to.y + self.other:get_properties().collisionbox[5] * 0.75
             local dir = vector.normalize{x = to.x - from.x, y = to.y - from.y, z = to.z - from.z}
 
             tigris.create_projectile(self._data.projectile, {

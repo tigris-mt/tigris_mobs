@@ -54,6 +54,7 @@ for _,color in ipairs(colors) do
 
         script = tigris.mobs.common.peaceful({
             eat = true,
+            breed = true,
         }),
     })
 

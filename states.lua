@@ -71,12 +71,16 @@ m.register_state("fight", {
 
 m.register_state("goto", {
     func = function(self, context)
-        local target = context.data.target and context.data.target or (self.enemy and self.enemy:getpos())
+        local target = context.data.target and context.data.target or (self.other and self.other:getpos())
         local g
         if target then
             g = m.go(self, context, target, self._data.speed)
             if g and g.name == "arrived" and not context.data.target then
-                g = {name = "arrived_entity"}
+                if m.valid_enemy(self, self.other) then
+                    g = {name = "arrived_enemy"}
+                else
+                    g = {name = "arrived_entity"}
+                end
             end
         end
         return g or m.state_timeout(self, context, 15)
@@ -103,8 +107,8 @@ m.register_state("flee", {
     func = function(self, context)
         local target
         context.data.punch_pos = context.data.punch_pos or self.object:getpos()
-        if self.enemy then
-            target = self.enemy:getpos()
+        if self.other then
+            target = self.other:getpos()
             if not target then
                 return {name = "escaped"}
             end
@@ -123,8 +127,8 @@ m.register_state("flee", {
 
 m.register_state("teleport", {
     func = function(self, context)
-        local target = context.data.target and context.data.target or (self.enemy and self.enemy:getpos() and vector.add(self.enemy:getpos(),
-            self.enemy:get_properties().collisionbox[5] * 0.75))
+        local target = context.data.target and context.data.target or (self.other and self.other:getpos() and vector.add(self.other:getpos(),
+            self.other:get_properties().collisionbox[5] * 0.75))
         self.teleport_timer = (self.teleport_timer or 0) + context.dtime
         if self.teleport_timer > (self._data.teleport_time or 5) then
             if target then

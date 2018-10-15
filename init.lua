@@ -9,7 +9,10 @@ m.spawn_factor = tonumber(minetest.settings:get("tigris.mobs.spawn_factor")) or 
 -- Spawn mob <name> at <pos> with optional <owner>.
 function m.spawn(name, pos, owner)
     local obj = minetest.add_entity(pos, name)
-    obj:get_luaentity().faction = owner and tigris.player_faction(owner) or nil
+    if obj then
+        obj:get_luaentity().faction = owner and tigris.player_faction(owner) or nil
+        obj:get_luaentity()._data.tame = not not owner
+    end
     return obj
 end
 
@@ -221,8 +224,14 @@ function m.register(name, def)
             end
 
             -- Set infotext with important information.
-            self.infotext = ("%s %d/%d ♥%s"):format(def.description, self.object:get_hp(), self.hp_max,
-                self.faction and (" " .. self.faction) or "") .. (m.debug and (" " .. (self._data.state or "?")) or "")
+            self.infotext = ("%s %d/%d ♥%s%s%s"):format(
+                def.description,
+                self.object:get_hp(),
+                self.hp_max,
+                (self.faction and (" " .. self.faction) or ""),
+                (m.debug and (" " .. (self._data.state or "?")) or ""),
+                ((m.debug and self._data.tame) and " tame" or "")
+            )
             -- Update properties.
             self.object:set_properties(self)
 
@@ -234,9 +243,9 @@ function m.register(name, def)
         end,
 
         on_punch = function(self, puncher)
-            -- Set our enemy if the puncher is valid.
+            -- Set our other if the puncher is valid.
             if m.valid_enemy(self, puncher) then
-                self.enemy = puncher
+                self.other = puncher
             end
             m.fire_event(self, {name = "hit"})
         end,
@@ -269,6 +278,7 @@ end
 
 tigris.include("state.lua")
 tigris.include("effects.lua")
+tigris.include("breeding.lua")
 
 tigris.include("items.lua")
 

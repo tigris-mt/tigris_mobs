@@ -18,9 +18,10 @@ function m.peaceful(params)
 
         wander = {
             actions = {
-                "enemy_reset",
+                "other_reset",
                 "timeout",
                 params.eat and "find_food" or "",
+                params.breed and "find_mate" or "",
                 "find_habitat",
                 "find_random",
             },
@@ -48,6 +49,17 @@ function m.peaceful(params)
         goto = {
             events = {
                 arrived = "standing",
+                arrived_entity = "breed",
+            },
+        },
+
+        breed = {
+            actions = {
+                "check_target",
+            },
+            events = {
+                gone = "wander",
+                done = "wander",
             },
         },
 
@@ -68,16 +80,17 @@ function m.turret(params)
             events = {
                 timeout = "wander",
                 hit = "fight",
+                node_damage = "ignore",
             },
         },
 
         wander = {
             actions = {
-                "enemy_reset",
+                "other_reset",
                 "fight_tick",
                 "timeout",
                 "regenerate",
-                "find_target",
+                "find_enemy",
             },
             events = {
                 found = "fight",
@@ -111,11 +124,11 @@ function m.hunter(params)
 
         wander = {
             actions = {
-                "enemy_reset",
+                "other_reset",
                 "fight_tick",
                 "timeout",
                 "regenerate",
-                "find_target",
+                "find_enemy",
                 "find_habitat",
                 "find_random",
             },
@@ -132,7 +145,7 @@ function m.hunter(params)
             },
             events = {
                 arrived = "standing",
-                arrived_entity = "fight",
+                arrived_enemy = "fight",
                 gone = "wander",
             },
         },
