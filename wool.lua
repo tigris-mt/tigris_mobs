@@ -30,7 +30,7 @@ tigris.mobs.register_interaction("shear_wool", {
         self._data.last_shorn = minetest.get_gametime()
         self.textures = {self.def.name .. "_shorn"}
 
-        local obj = minetest.add_item(self.object:getpos(), ItemStack("wool:" .. self.def.color .. " " .. math.random(1, 3)))
+        local obj = minetest.add_item(self.object:getpos(), ItemStack("wool:" .. self.def.color .. " " .. math.random(1, self._data.wool_max or 3)))
         if obj then
             obj:setvelocity(vector.new(math.random() * 2 - 1, math.random() * 4 - 2, math.random() * 2 - 1))
         end
