@@ -24,7 +24,7 @@ end
 
 m.register_action("find_food", {
     func = function(self, context)
-        if self.object:get_hp() >= self.hp_max and (minetest.get_gametime() - (self.eaten or 0) < 60 * 15) then
+        if self.object:get_hp() >= self.hp_max and (minetest.get_gametime() - (self._data.eaten or 0) < 60 * 15) then
             return
         end
         return find_node(self, context, context.def.food_nodes, true)

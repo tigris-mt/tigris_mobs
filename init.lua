@@ -18,16 +18,9 @@ end
 
 local uids = 0
 
-function m.register(name, def)
-    def.name = name
-    for k,v in pairs(def.script) do
-        v.events = v.events or {}
-        v.actions = v.actions or {}
-        v.interactions = v.interactions or {}
-    end
-
-    -- Register spawn item.
-    minetest.register_node(name, {
+function m.register_mob_node(name, mob, overrides)
+    local def = minetest.registered_entities[mob].mob_def
+    local d = {
         description = def.description,
 
         -- Just use the mob as the nodebox.
@@ -39,15 +32,21 @@ function m.register(name, def)
         -- We're not actually placing a node.
         node_placement_prediction = "",
 
-        groups = {not_in_creative_inventory = 1, tigris_mob = 1},
+        groups = {not_in_creative_inventory = 1, tigris_mob = 1, dig_immediate = 3},
+    }
+    for k,v in pairs(overrides) do
+        d[k] = v
+    end
+    minetest.register_node(name, d)
+end
 
-        -- Simple spawn and return.
-        on_place = function(itemstack, placer, pointed_thing)
-            m.spawn(name, minetest.get_pointed_thing_position(pointed_thing, true), placer:get_player_name())
-            itemstack:take_item()
-            return itemstack
-        end,
-    })
+function m.register(name, def)
+    def.name = name
+    for k,v in pairs(def.script) do
+        v.events = v.events or {}
+        v.actions = v.actions or {}
+        v.interactions = v.interactions or {}
+    end
 
     minetest.register_entity(name, {
         -- Basic entity properties.
@@ -254,6 +253,16 @@ function m.register(name, def)
             m.interaction(self, clicker)
         end,
     })
+
+    -- Register spawn item and default appearance.
+    m.register_mob_node(name, name, {
+        -- Simple spawn and return.
+        on_place = function(itemstack, placer, pointed_thing)
+            m.spawn(name, minetest.get_pointed_thing_position(pointed_thing, true), placer:get_player_name())
+            itemstack:take_item()
+            return itemstack
+        end,
+    })
 end
 
 function m.valid_enemy(self, obj, find)
@@ -274,6 +283,12 @@ function m.valid_enemy(self, obj, find)
     end
 
     return false
+end
+
+function m.is_protected(obj, name)
+    local ent = obj:get_luaentity()
+    assert(ent and ent.tigris_mob)
+    return ent.faction and ent.faction ~= tigris.player_faction(name)
 end
 
 tigris.include("state.lua")

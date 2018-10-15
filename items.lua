@@ -17,6 +17,20 @@ minetest.register_craft({
     cooktime = 5,
 })
 
+-- MIT TenPlus1 mobs_redo - Shears
+minetest.register_tool(":mobs:shears", {
+    description = "Steel Shears",
+    inventory_image = "mobs_shears.png",
+})
+
+minetest.register_craft{
+    output = "mobs:shears",
+    recipe = {
+        {"default:steel_ingot", ""},
+        {"group:stick", "default:steel_ingot"},
+    },
+}
+
 minetest.register_craftitem("tigris_mobs:bone", {
     description = "Bone",
     inventory_image = "tigris_mobs_bone.png",

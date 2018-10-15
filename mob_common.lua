@@ -186,6 +186,11 @@ end
 for k,v in pairs(m) do
     m[k] = function(params, after)
         local ret = v(params or {})
+        for k,v in pairs(ret) do
+            v.actions = v.actions or {}
+            v.interactions = v.interactions or {}
+            v.events = v.events or {}
+        end
         if after then
             after(ret)
         end
