@@ -41,6 +41,8 @@ function m.register_mob_node(name, mob, overrides)
 end
 
 function m.register(name, def)
+    local rname = name
+    name = name:gsub("^:", "")
     def.name = name
     for k,v in pairs(def.script) do
         v.events = v.events or {}
@@ -48,7 +50,7 @@ function m.register(name, def)
         v.interactions = v.interactions or {}
     end
 
-    minetest.register_entity(name, {
+    minetest.register_entity(rname, {
         -- Basic entity properties.
         physical = true,
         collisionbox = def.collision or def.box[1],
@@ -255,7 +257,7 @@ function m.register(name, def)
     })
 
     -- Register spawn item and default appearance.
-    m.register_mob_node(name, name, {
+    m.register_mob_node(rname, name, {
         -- Simple spawn and return.
         on_place = function(itemstack, placer, pointed_thing)
             m.spawn(name, minetest.get_pointed_thing_position(pointed_thing, true), placer:get_player_name())
