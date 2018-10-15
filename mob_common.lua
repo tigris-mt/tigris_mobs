@@ -20,12 +20,14 @@ function m.peaceful(params)
             actions = {
                 "other_reset",
                 "timeout",
+                params.eat and "find_food_interest" or "",
                 params.eat and "find_food" or "",
                 params.breed and "find_mate" or "",
                 "find_habitat",
                 "find_random",
             },
             events = {
+                interest = "goto_interest",
                 found = "goto",
             },
         },
@@ -50,6 +52,18 @@ function m.peaceful(params)
             events = {
                 arrived = "standing",
                 arrived_entity = "breed",
+            },
+        },
+
+        goto_interest = {
+            actions = {
+                "check_target",
+                "check_food_interest",
+            },
+            events = {
+                arrived = "wander",
+                arrived_entity = "wander",
+                gone = "wander",
             },
         },
 

@@ -87,6 +87,20 @@ m.register_state("goto", {
     end,
 })
 
+m.register_state("goto_interest", {
+    func = function(self, context)
+        local target = context.data.target and context.data.target or (self.other and self.other:getpos())
+        local g
+        if target then
+            g = m.go(self, context, target, self._data.speed)
+            if g and g.name == "arrived" and not context.data.target then
+                g = {name = "arrived_entity"}
+            end
+        end
+        return g or m.state_timeout(self, context, 15)
+    end,
+})
+
 m.register_state("standing", {
     func = function(self, context) return m.state_timeout(self, context, 5) end,
 })

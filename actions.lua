@@ -57,6 +57,35 @@ m.register_action("check_food", {
     end,
 })
 
+m.register_action("find_food_interest", {
+    func = function(self, context)
+        for _,obj in ipairs(minetest.get_objects_inside_radius(self.object:getpos(), 8)) do
+            if obj:is_player() and not m.is_protected(self.object, obj:get_player_name()) then
+                for _,v in ipairs(context.def.food_items) do
+                    if v == obj:get_wielded_item():get_name() then
+                        self.other = obj
+                        return {name = "interest"}
+                    end
+                end
+            end
+        end
+    end
+})
+
+m.register_action("check_food_interest", {
+    func = function(self, context)
+        if not self.other then
+            return
+        end
+        for _,v in ipairs(context.def.food_items) do
+            if v == self.other:get_wielded_item():get_name() then
+                return
+            end
+        end
+        return {name = "gone"}
+    end,
+})
+
 m.register_action("timeout", {
     func = function(self, context)
         if not self._data.tame and not self.faction and self._data.timeout and os.time() - self._data.created > self._data.timeout then
@@ -83,6 +112,7 @@ m.register_action("check_target", {
             end
         else
             rc = false
+            self.other = nil
         end
         if not rc then
             if self.had_target then
