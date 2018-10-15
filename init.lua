@@ -310,4 +310,3 @@ Danger: Ko (Hard), Ja (Medium), Ve (Easy)
 --]]
 
 tigris.include("mob_common.lua")
-tigris.include_dir("mobs")
