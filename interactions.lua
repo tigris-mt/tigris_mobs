@@ -7,9 +7,6 @@ m.register_interaction("feed", {
         for _,v in ipairs(context.def.food_items or {}) do
             ok = ok or (item == v)
         end
-        for _,v in ipairs(context.def.food_nodes or {}) do
-            ok = ok or (item == v)
-        end
         if ok then
             stack:take_item()
             context.other:set_wielded_item(stack)
