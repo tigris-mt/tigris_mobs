@@ -12,7 +12,8 @@ end
 
 local colors = {"white", "black", "brown", "grey", "dark_grey"}
 for _,color in ipairs(colors) do
-    tigris.mobs.register("tigris_mobs:sheep_" .. color, {
+    local name = "tigris_mobs:sheep_" .. color
+    tigris.mobs.register(name, {
         description = "Sheep",
         collision = {-0.4, -0.4, -0.4, 0.4, 0.4, 0.4},
         box = {
@@ -62,18 +63,18 @@ for _,color in ipairs(colors) do
             eat = true,
             breed = true,
         }, function(s)
-            s.global.interactions.sheep_shear = true
-            s.flee.interactions.sheep_shear = false
-            table.insert(s.wander.actions, "sheep_grow_wool")
-            table.insert(s.standing.actions, "sheep_grow_wool")
+            s.global.interactions.shear_wool = true
+            s.flee.interactions.shear_wool = false
+            table.insert(s.wander.actions, "grow_wool")
+            table.insert(s.standing.actions, "grow_wool")
         end),
     })
 
-    tigris.mobs.register_mob_node("tigris_mobs:sheep_" .. color .. "_shorn", "tigris_mobs:sheep_" .. color, {
+    tigris.mobs.register_mob_node(name .. "_shorn", name, {
         tiles = textures(color, true),
     })
 
-    tigris.mobs.register_spawn("tigris_mobs:sheep_" .. color, {
+    tigris.mobs.register_spawn(name, {
         ymax = tigris.world_limits.max.y,
         ymin = -24,
 
@@ -85,41 +86,3 @@ for _,color in ipairs(colors) do
         nodes = {"group:soil"},
     })
 end
-
-tigris.mobs.register_action("sheep_grow_wool", {
-    func = function(self, context)
-        if not self._data.shorn then
-            return
-        end
-        local leat = self._data.eaten or 0
-        local lshear = self._data.last_shorn or 0
-        if leat < lshear then
-            return
-        end
-        if minetest.get_gametime() - lshear >= 60 * 10 then
-            self.textures = {"tigris_mobs:sheep_" .. self.def.color}
-            self._data.shorn = false
-        end
-    end,
-})
-
-tigris.mobs.register_interaction("sheep_shear", {
-    func = function(self, context)
-        local stack = context.other:get_wielded_item()
-        if stack:get_name() ~= "mobs:shears" or self._data.shorn or tigris.mobs.is_protected(self.object, context.other:get_player_name()) then
-            return
-        end
-
-        self._data.shorn = true
-        self._data.last_shorn = minetest.get_gametime()
-        self.textures = {"tigris_mobs:sheep_" .. self.def.color .. "_shorn"}
-
-        local obj = minetest.add_item(self.object:getpos(), ItemStack("wool:" .. self.def.color .. " " .. math.random(1, 3)))
-        if obj then
-            obj:setvelocity(vector.new(math.random() * 2 - 1, math.random() * 4 - 2, math.random() * 2 - 1))
-        end
-
-        stack:add_wear(655)
-        context.other:set_wielded_item(stack)
-    end,
-})
