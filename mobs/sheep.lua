@@ -11,8 +11,10 @@ local function textures(color, shorn)
 end
 
 local colors = {"white", "black", "brown", "grey", "dark_grey"}
+local sheep = {}
 for _,color in ipairs(colors) do
     local name = "tigris_mobs:sheep_" .. color
+    table.insert(sheep, name)
     tigris.mobs.register(name, {
         description = "Sheep",
         collision = {-0.4, -0.4, -0.4, 0.4, 0.4, 0.4},
@@ -49,6 +51,7 @@ for _,color in ipairs(colors) do
         },
 
         habitat_nodes = {"group:soil"},
+        breedable = sheep,
 
         color = color,
 

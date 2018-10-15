@@ -20,9 +20,9 @@ function m.peaceful(params)
             actions = {
                 "other_reset",
                 "timeout",
+                params.breed and "find_mate" or "",
                 params.eat and "find_food_interest" or "",
                 params.eat and "find_food" or "",
-                params.breed and "find_mate" or "",
                 "find_habitat",
                 "find_random",
             },

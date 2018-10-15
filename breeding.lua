@@ -16,17 +16,30 @@ local function reset_fertile(obj)
     obj:get_luaentity()._data.fertile_timer = minetest.get_gametime()
 end
 
+local function name_in(name, list)
+    for _,v in ipairs(list) do
+        if v == name then
+            return true
+        end
+    end
+    return false
+end
+
 m.register_action("find_mate", {
     func = function(self, context)
         self._data.fertile_timer = self._data.fertile_timer or minetest.get_gametime()
         if not is_fertile(self.object) then
             return
         end
+        local possible = {}
         for _,obj in ipairs(minetest.get_objects_inside_radius(self.object:getpos(), 16)) do
-            if obj ~= self.object and obj:get_luaentity() and obj:get_luaentity().name == context.def.name and is_fertile(obj) then
-                self.other = obj
-                return {name = "found"}
+            if obj ~= self.object and obj:get_luaentity() and name_in(obj:get_luaentity().name, self.def.breedable or {self.def.name}) and is_fertile(obj) then
+                table.insert(possible, obj)
             end
+        end
+        if #possible > 0 then
+            self.other = possible[math.random(#possible)]
+            return {name = "found"}
         end
     end,
 })
