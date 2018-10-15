@@ -17,6 +17,11 @@ local uids = 0
 
 function m.register(name, def)
     def.name = name
+    for k,v in pairs(def.script) do
+        v.events = v.events or {}
+        v.actions = v.actions or {}
+        v.interactions = v.interactions or {}
+    end
 
     -- Register spawn item.
     minetest.register_node(name, {
@@ -235,6 +240,10 @@ function m.register(name, def)
             end
             m.fire_event(self, {name = "hit"})
         end,
+
+        on_rightclick = function(self, clicker)
+            m.interaction(self, clicker)
+        end,
     })
 end
 
@@ -259,7 +268,10 @@ function m.valid_enemy(self, obj, find)
 end
 
 tigris.include("state.lua")
+tigris.include("effects.lua")
+
 tigris.include("items.lua")
+
 tigris.include("spawning.lua")
 tigris.include("spawner.lua")
 

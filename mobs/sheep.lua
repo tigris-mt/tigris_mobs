@@ -38,6 +38,11 @@ for _,color in ipairs(colors) do
             "group:flora",
         },
 
+        food_items = {
+            "farming:wheat",
+            "farming:seed_wheat",
+        },
+
         habitat_nodes = {"group:soil"},
 
         on_init = function(self, data)

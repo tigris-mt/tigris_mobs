@@ -5,6 +5,9 @@ tigris.mobs.common = m
 function m.peaceful(params)
     return {
         global = {
+            interactions = {
+                feed = true,
+            },
             events = {
                 hit = "flee",
                 timeout = "wander",
@@ -49,6 +52,9 @@ function m.peaceful(params)
         },
 
         flee = {
+            interactions = {
+                feed = false,
+            },
             events = {
                 escaped = "wander",
             }
