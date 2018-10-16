@@ -298,7 +298,6 @@ tigris.include("state.lua")
 tigris.include("effects.lua")
 
 tigris.include("breeding.lua")
-tigris.include("wool.lua")
 
 tigris.include("items.lua")
 
