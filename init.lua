@@ -72,7 +72,8 @@ function m.register(name, def)
         -- Create initial data.
         _on_init = function(self)
             self._data = {
-                created = os.time(),
+                created = minetest.get_gametime(),
+                last_active = minetest.get_gametime(),
                 timeout = 300,
                 jump = 5,
                 speed = 1,

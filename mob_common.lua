@@ -57,6 +57,7 @@ function m.peaceful(params)
 
         goto_interest = {
             actions = {
+                "reset_timeout",
                 "check_target",
                 "check_food_interest",
             },
@@ -78,6 +79,9 @@ function m.peaceful(params)
         },
 
         flee = {
+            actions = {
+                "reset_timeout",
+            },
             interactions = {
                 feed = false,
             },
@@ -113,6 +117,7 @@ function m.turret(params)
 
         fight = {
             actions = {
+                "reset_timeout",
                 "fight_tick",
                 "throw",
             },
@@ -175,6 +180,7 @@ function m.hunter(params)
 
         fight = {
             actions = {
+                "reset_timeout",
                 "fight_tick",
                 "fight",
             },
@@ -186,6 +192,7 @@ function m.hunter(params)
 
         flee = {
             actions = {
+                "reset_timeout",
                 "fight_tick",
                 "regenerate",
             },

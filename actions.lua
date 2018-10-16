@@ -88,11 +88,18 @@ m.register_action("check_food_interest", {
 
 m.register_action("timeout", {
     func = function(self, context)
-        if not self._data.tame and not self.faction and self._data.timeout and os.time() - self._data.created > self._data.timeout then
+        if not self._data.tame and not self.faction and self._data.timeout and minetest.get_gametime() - self._data.last_active > self._data.timeout then
             self.object:remove()
         end
     end,
 })
+
+m.register_action("reset_timeout", {
+    func = function(self, context)
+        self._data.last_active = minetest.get_gametime()
+    end,
+})
+
 
 m.register_action("check_hp", {
     func = function(self, context)
