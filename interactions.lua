@@ -11,6 +11,7 @@ m.register_interaction("feed", {
             stack:take_item()
             context.other:set_wielded_item(stack)
             m.effects.eat(self)
+            self._data.tame = self._data.tame or (math.random() < 0.25)
         end
     end,
 })
