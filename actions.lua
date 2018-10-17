@@ -2,7 +2,7 @@ local m = tigris.mobs
 m.register_action("find_enemy", {
     func = function(self, context)
         for _,obj in ipairs(minetest.get_objects_inside_radius(self.object:getpos(), 16)) do
-            if m.valid_enemy(self, obj, true) then
+            if m.valid_enemy(self, obj, true) and not tigris.check_pos_safe(obj:getpos()) then
                 self.other = obj
                 return {name = "found"}
             end
