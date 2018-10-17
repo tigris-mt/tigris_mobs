@@ -232,7 +232,7 @@ function m.register(name, def)
                 self.hp_max,
                 (self.faction and (" " .. self.faction) or ""),
                 (m.debug and (" " .. (self._data.state or "?")) or ""),
-                ((m.debug and self._data.tame) and " tame" or "")
+                (self._data.tame and " (tame)" or "")
             )
             -- Update properties.
             self.object:set_properties(self)
