@@ -1,3 +1,5 @@
+local ugs = minetest.get_modpath("underground_start")
+
 function tigris.mobs.register_spawn(mob, def)
     minetest.register_abm({
         nodenames = def.nodes,
@@ -8,6 +10,11 @@ function tigris.mobs.register_spawn(mob, def)
 
         action = function(pos, node, _, all_count)
             if all_count > 32 then
+                return
+            end
+
+            -- Don't spawn mobs while underground_start is generating.
+            if ugs and not underground_start.done then
                 return
             end
 
