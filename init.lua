@@ -40,6 +40,10 @@ function m.register_mob_node(name, mob, overrides)
     minetest.register_node(name, d)
 end
 
+function m.death_callback(mob, last_hitter)
+    -- Override.
+end
+
 function m.register(name, def)
     local rname = name
     name = name:gsub("^:", "")
@@ -105,6 +109,9 @@ function m.register(name, def)
             if def.on_death then
                 def.on_death(self)
             end
+
+            -- Run global death callback.
+            m.death_callback(self, self.last_hitter)
 
             -- Drop items.
             for _,drop in ipairs(self._drops or {}) do
@@ -249,6 +256,7 @@ function m.register(name, def)
             if m.valid_enemy(self, puncher) then
                 self.other = puncher
             end
+            self.last_hitter = puncher
             m.fire_event(self, {name = "hit"})
         end,
 
