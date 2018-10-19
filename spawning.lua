@@ -13,8 +13,8 @@ function tigris.mobs.register_spawn(mob, def)
                 return
             end
 
-            -- Don't spawn mobs while underground_start is generating.
-            if ugs and not underground_start.done then
+            -- Don't spawn mobs near undergound start.
+            if ugs and underground_start.check_pos_near(pos) then
                 return
             end
 
