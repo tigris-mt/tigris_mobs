@@ -288,6 +288,9 @@ function m.valid_enemy(self, obj, find)
         if not ent then
             return false
         end
+        if ent.tigris_mob and (not self.faction) then
+            return false
+        end
         if ent.tigris_mob and (ent.def.level < self.def.level or not find) and ent.def.group ~= self.def.group then
             return (not self.faction) or (not ent.faction) or (ent.faction ~= self.faction)
         end
