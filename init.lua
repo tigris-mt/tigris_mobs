@@ -4,7 +4,7 @@ tigris.mobs = m
 -- If enabled, will display debug information.
 m.debug = minetest.settings:get_bool("tigris.mobs.debug", false)
 -- Multiplier for spawn chance (1 = normal, 2 = twice as many, etc.)
-m.spawn_factor = tonumber(minetest.settings:get("tigris.mobs.spawn_factor")) or 1
+m.spawn_factor = (tonumber(minetest.settings:get("tigris.mobs.spawn_factor")) or 1) * 0.5
 
 -- Spawn mob <name> at <pos> with optional <owner>.
 function m.spawn(name, pos, owner)
