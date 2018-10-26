@@ -78,7 +78,7 @@ function m.register(name, def)
             self._data = {
                 created = minetest.get_gametime(),
                 last_active = minetest.get_gametime(),
-                timeout = 300,
+                timeout = 150,
                 jump = 5,
                 speed = 1,
                 fast_speed = 2,
@@ -262,7 +262,7 @@ function m.register(name, def)
             end
             if puncher:is_player() then
                 self.last_faction_hit = minetest.get_gametime()
-            elseif puncher:get_luaentity() and puncher.get_luaentity().tigris_mob and puncher.get_luaentity().faction then
+            elseif puncher:get_luaentity() and puncher:get_luaentity().tigris_mob and puncher:get_luaentity().faction then
                 self.last_faction_hit = minetest.get_gametime()
             end
             self.last_hitter = puncher
