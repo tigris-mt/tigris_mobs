@@ -113,6 +113,10 @@ function m.register(name, def)
             -- Run global death callback.
             m.death_callback(self, self.last_hitter)
 
+            if minetest.get_gametime() - (self.last_faction_hit or 0) > 30 then
+                return
+            end
+
             -- Drop items.
             for _,drop in ipairs(self._drops or {}) do
                 if math.random() * 100 <= drop[1] then
@@ -256,6 +260,11 @@ function m.register(name, def)
             if m.valid_enemy(self, puncher) then
                 self.other = puncher
             end
+            if puncher:is_player() then
+                self.last_faction_hit = minetest.get_gametime()
+            elseif puncher:get_luaentity() and puncher.get_luaentity().tigris_mob and puncher.get_luaentity().faction then
+                self.last_faction_hit = minetest.get_gametime()
+            end
             self.last_hitter = puncher
             m.fire_event(self, {name = "hit"})
         end,
@@ -286,9 +295,6 @@ function m.valid_enemy(self, obj, find)
     else
         local ent = obj:get_luaentity()
         if not ent then
-            return false
-        end
-        if ent.tigris_mob and (not self.faction) then
             return false
         end
         if ent.tigris_mob and (ent.def.level < self.def.level or not find) and ent.def.group ~= self.def.group then
